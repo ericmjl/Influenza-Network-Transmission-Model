@@ -1,0 +1,20 @@
+UML for Simulation
+
+Class Virus
+	Has Segment
+		Segment Number --> Can associate with Protein Name
+		Sequence of 0s and 1s --> Can compute Length
+	Has Timestamp of Birth
+
+	Can Mutate
+		Randomly select one position in one segment and flip its sequence.
+			0 --> 1
+			1 --> 0
+
+
+Basic steps:
+1. Initialize M viruses, each with sequence length N
+2. At each time step, randomly select one virus and clone it.
+3. Run simulation fo X time steps.
+4. Compute PWI between each sampled virus.
+5. Reconstruct network.
