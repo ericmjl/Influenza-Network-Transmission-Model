@@ -4,13 +4,14 @@ Class Virus
 	Has Segment
 		Segment Number --> Can associate with Protein Name
 		Sequence of 0s and 1s --> Can compute Length
+
+		Can Mutate
+			Randomly select one position in one segment and flip its sequence.
+				0 --> 1
+				1 --> 0
 	Has Timestamp of Birth
 
-	Can Mutate
-		Randomly select one position in one segment and flip its sequence.
-			0 --> 1
-			1 --> 0
-
+	
 
 Basic steps:
 1. Initialize M viruses, each with sequence length N
