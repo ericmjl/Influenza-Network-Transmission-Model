@@ -100,8 +100,10 @@ class Environment(object):
 			new_virus.SetReassortedStatus(True)
 			if len(new_parents) == 1:
 				new_virus.SetParent(tuple(new_parents)[0])
+				new_virus.SetReassortedStatus(False)
 			else:
 				new_virus.SetParent(tuple(new_parents))
+				new_virus.SetReassortedStatus(True)
 
 			# Add the virus to the list of viruses.
 			self.viruses.append(new_virus)
