@@ -21,10 +21,15 @@ class Environment(object):
 		self.num_viruses = len(self.viruses)
 
 	def GetViruses(self):
-		"""
-		This method returns the list of viruses in the environment.
-		"""
+		"""This method returns the list of viruses in the environment."""
 		return self.viruses
+
+	def GetVirus(self, id):
+		"""This method returns a specified virus from the environment."""
+		if id < 0 or id > len(self.viruses) - 1:
+			print "ERROR: The virus ID should be between 0 and %s ." % (len(self.viruses))
+		else:
+			return self.viruses[id]
 
 	def ReplicateAVirus(self, mutate=False):
 		"""
@@ -43,7 +48,7 @@ class Environment(object):
 		# Append the virus to the virus list.
 		self.viruses.append(new_virus)
 
-	def RandomlyReassortTwoViruses(self, mutate):
+	def RandomlyReassortTwoViruses(self, mutate=False):
 		"""
 		Here, two viruses will be selected at random from the list of viruses, 
 		and a new virus containing a combination of segments, drawn at random 
@@ -56,7 +61,7 @@ class Environment(object):
 		# Randomly pick two viruses
 		virus1, virus2 = sample(self.viruses, 2)
 		if len(virus1.GetSegments()) != len(virus2.GetSegments()):
-			print "Virus %s and Virus %s do not have the same number of segments!" % (virus1.GetID(), virus2.GetID())
+			print "ERROR: Virus %s and Virus %s do not have the same number of segments!" % (virus1.GetID(), virus2.GetID())
 
 		else:
 			# Create the dictionary that will hold the pool of viruses
@@ -93,7 +98,8 @@ class Environment(object):
 				else:
 					new_parents.add(virus2.GetID())
 
-			print new_parents
+			# print new_parents
+
 			# Batch set the new virus' segments to the list of segments. See
 			# Virus class documentation on the use of this method.
 			new_virus.SetSegments(new_segments)
