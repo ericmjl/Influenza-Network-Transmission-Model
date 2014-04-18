@@ -126,6 +126,7 @@ class Virus(object):
 		new_virus.SetID(id)
 		new_virus.SetParent(self.GetID())
 		new_virus.SetReassortedStatus(False)
+		
 		if mutate == True:
 			new_virus.Mutate()
 			return new_virus

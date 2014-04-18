@@ -27,7 +27,8 @@ class Environment(object):
 	def GetVirus(self, id):
 		"""This method returns a specified virus from the environment."""
 		if id < 0 or id > len(self.viruses) - 1:
-			print "ERROR: The virus ID should be between 0 and %s ." % (len(self.viruses))
+			print "ERROR: The virus ID should be between"
+			" 0 and %s ." % (len(self.viruses))
 		else:
 			return self.viruses[id]
 
@@ -61,7 +62,8 @@ class Environment(object):
 		# Randomly pick two viruses
 		virus1, virus2 = sample(self.viruses, 2)
 		if len(virus1.GetSegments()) != len(virus2.GetSegments()):
-			print "ERROR: Virus %s and Virus %s do not have the same number of segments!" % (virus1.GetID(), virus2.GetID())
+			print "ERROR: Virus %s and Virus %s do not have the same number \
+				of segments!" % (virus1.GetID(), virus2.GetID())
 
 		else:
 			# Create the dictionary that will hold the pool of viruses
@@ -73,7 +75,8 @@ class Environment(object):
 			for i in range(num_segments):
 				segments_pool[i] = []
 
-			# Append each segment in each virus to the appropriate segment pool
+			# Append each segment in each virus to the appropriate segment 
+			# pool
 			for i, segment in enumerate(virus1.GetSegments()):
 				segments_pool[i].append(segment)
 
@@ -86,9 +89,9 @@ class Environment(object):
 			new_virus = Virus(id=new_id, num_segments=num_segments)
 			new_parents = set()
 
-			# For each pool of segments in the segment pool, randomly choose one
-			# segment to be added to the virus. Append it to the list of segments
-			# to be set as the new virus' segments.
+			# For each pool of segments in the segment pool, randomly choose 
+			# one segment to be added to the virus. Append it to the list of 
+			# segments to be set as the new virus' segments.
 			new_segments = []
 			for k,v in segments_pool.iteritems():
 				luckysegment = choice(v)
