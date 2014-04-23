@@ -19,7 +19,7 @@ class Environment(object):
 			if virus_type == 'default':
 				virus = Virus(id=i)
 			if virus_type == 'influenza':
-				virus = SmallFluVirus(id=1)
+				virus = SmallFluVirus(id=i)
 			self.viruses.append(virus)
 
 		self.num_viruses = len(self.viruses)
