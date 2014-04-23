@@ -53,8 +53,8 @@ class Sequence(object):
 		"""
 		self.sequence += sequence
 
-	def GetSequence(self):
-		return self.sequence
+	def GetString(self):
+		return str(self.sequence)
 
 	def Mutate(self, start=None, end=None, num_positions=1):
 		"""

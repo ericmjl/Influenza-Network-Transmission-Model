@@ -20,9 +20,9 @@ class SmallFluVirus(Virus):
 
 	"""
 	def __init__(self, id, num_segments=2, parent=None, \
-		generate_sequence=True):
+		generate_sequence=False):
 		Virus.__init__(self, id=id, num_segments=num_segments, \
-			parent=parent, generate_sequence=True)
+			parent=parent, generate_sequence=generate_sequence)
 
 		# This is the seed sequence for a SmallFluVirus' Segment 0.
 		sequence0 = 'ATTTCCCTTGCATATATATTGCGTTTCTTCGACCTTTTAACCGCTCTCTTAGAA' + \

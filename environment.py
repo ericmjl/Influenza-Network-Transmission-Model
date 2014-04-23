@@ -1,4 +1,5 @@
 from virus import Virus
+from smallfluvirus import SmallFluVirus
 from random import choice, sample
 from collections import defaultdict
 
@@ -8,14 +9,17 @@ class Environment(object):
 	The Environment contains a bunch of viruses, and in the Environment, one 
 	can choose to manipulate the viruses at will.
 	"""
-	def __init__(self, num_viruses=1):
+	def __init__(self, num_viruses=1, virus_type='default'):
 		"""Initialize the environment with only 1 virus."""
 		super(Environment, self).__init__()
 		
 		# This list keeps track of the number of viruses present
 		self.viruses = []
 		for i in range(num_viruses):
-			virus = Virus(id=i)
+			if virus_type == 'default':
+				virus = Virus(id=i)
+			if virus_type == 'influenza':
+				virus = SmallFluVirus(id=1)
 			self.viruses.append(virus)
 
 		self.num_viruses = len(self.viruses)
@@ -27,8 +31,8 @@ class Environment(object):
 	def GetVirus(self, id):
 		"""This method returns a specified virus from the environment."""
 		if id < 0 or id > len(self.viruses) - 1:
-			print "ERROR: The virus ID should be between"
-			" 0 and %s ." % (len(self.viruses))
+			print "ERROR: The virus ID should be between" + \
+			" 0 and %s." % (len(self.viruses) - 1)
 		else:
 			return self.viruses[id]
 
@@ -86,7 +90,10 @@ class Environment(object):
 			# print segments_pool
 
 			new_id = len(self.viruses)
-			new_virus = Virus(id=new_id, num_segments=num_segments)
+			if isinstance(virus1, Virus) and isinstance(virus2, Virus):
+				new_virus = Virus(id=new_id, num_segments=num_segments)
+			if isinstance(virus1, SmallFluVirus) and isinstance(virus2, SmallFluVirus):
+				new_virus = SmallFluVirus(id=new_id, num_segments=num_segments)
 			new_parents = set()
 
 			# For each pool of segments in the segment pool, randomly choose 

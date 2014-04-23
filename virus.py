@@ -34,7 +34,7 @@ class Virus(object):
 		self.segments = self.GenerateSegments(num_segments)
 
 	def __repr__(self):
-		return str([self.GetID(), self.GetParent(), self.GetSequences()])
+		return str([self.GetID(), self.GetParent()])
 
 	def GenerateSegment(self, segment_number, sequence=None, length=10):
 		"""
@@ -105,6 +105,10 @@ class Virus(object):
 	def GetSegments(self):
 		"""This method will return a list of segments."""
 		return self.segments
+
+	def GetSegment(self, segment_number):
+		"""This method will return the particular segment specified."""
+		return self.segments[segment_number]
 
 	def SetSegments(self, list_of_segments):
 		"""

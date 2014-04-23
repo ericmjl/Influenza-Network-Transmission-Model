@@ -52,8 +52,8 @@ class Segment(object):
 		self.sequence.Append(sequence)
 
 	def GetSequence(self):
-		"""This method gets a segment's sequence."""
-		return self.sequence.GetSequence()
+		"""This method gets a segment's sequence as a string."""
+		return self.sequence
 
 	def GetNumber(self):
 		"""This method gets a segment's number."""
