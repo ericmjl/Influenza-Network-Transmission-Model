@@ -1,4 +1,5 @@
 from random import choice, random, randint
+from sequence import Sequence
 
 class Segment(object):
 	"""
@@ -11,70 +12,57 @@ class Segment(object):
 	def __init__(self, segment_number, sequence=None, length=10):
 		"""Initialize a segment with no sequence."""
 		super(Segment, self).__init__()
-		self.sequence = sequence
+		
+		# The sequence of the Segment object is a Sequence object.
+		self.sequence = Sequence(length)
+		
+		# Each segment has a segment number associated with it. The
+		# segment number does not belong to the Sequence object, but
+		# to the Segment object.
 		self.number = segment_number
-		self.length = length
+
+		# This is syntactic sugar, can be taken away if not needed.
+		self.length = self.sequence.length
 
 	def __repr__(self):
 		return '%s %s' % (self.number, self.sequence)
 	
 	def GenerateSequence(self):
 		"""
-		This method will generate a sequence for the segment, using the 
-		length attribute of the segment.
+		This is syntactic sugar to generate a sequence of specified length.
 		"""
-		sequence = ''
-		for i in range(self.length):
-			letter = choice(['A', 'T', 'G', 'C'])
-			sequence += letter
-		return sequence
-
-	def GenerateAndSetSequence(self):
-		"""
-		Syntactic sugar for generating and setting the sequence
-		of a virus.
-		"""
-		sequence = self.GenerateSequence()
-		self.SetSequence(sequence)
+		self.sequence.GenerateSequence(self.length)
 
 	def SetSequence(self, sequence):
 		"""Setter method for a segment's sequence."""
-		self.sequence = sequence
+		self.sequence.SetSequence(sequence)
+
+	def GenerateAndSetSequence(self):
+		"""
+		This method is syntactic sugar for generating and setting the sequence
+		of a virus.
+		"""
+		sequence = self.sequence.GenerateSequence(self.length)
+		self.sequence.SetSequence(sequence)
+
+	def Append(self, sequence):
+		"""
+		This method is syntactic sugar for appending a sequence to the virus.
+		"""
+		self.sequence.Append(sequence)
 
 	def GetSequence(self):
-		"""Getter method for a segment's sequence."""
-		return self.sequence
+		"""This method gets a segment's sequence."""
+		return self.sequence.GetSequence()
 
 	def GetNumber(self):
-		"""Getter method for a segment's number."""
+		"""This method gets a segment's number."""
 		return self.number
 
-	def Mutate(self):
+	def Mutate(self, start=None, end=None, num_positions=1):
 		"""
-		This method will randomly pick a letter in the segment's sequence,
-		and proceed to mutate that letter.
+		This method is syntactic sugar for mutating the segment's sequence.
+		See: Sequence.Mutate()
 		"""
 
-		# Randomly pick a position to mutate.
-		n = randint(0, len(self.sequence) - 1)
-		sequence = self.sequence
-
-		# Because we are using the nucleotide code, and we are mutating the 
-		# segment, we therefore have to mutate away from the current letter.
-		possible_letters = set(['A', 'T', 'G', 'C'])
-		current_letter = set(sequence[n])
-		new_letter = choice(list(
-			possible_letters.difference(set(current_letter))))
-
-		# Because Python strings are immutable, we will construct a new
-		# string from the old one, except that the position specified will
-		# be mutated.
-		new_sequence = ''
-		for i, letter in enumerate(sequence):
-			if i == n:
-				new_sequence += new_letter
-			else:
-				new_sequence += letter
-		
-		# Set the sequence of the segment 
-		self.SetSequence(new_sequence)
+		self.GetSequence().Mutate(start=start, end=end, num_positions=num_positions)

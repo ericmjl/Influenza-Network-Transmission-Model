@@ -12,7 +12,6 @@ class Virus(object):
 	"""
 	def __init__(self, id, num_segments=2, parent=None, \
 		generate_sequence=True):
-
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		Set the id of the virus to the particular id fed in.
@@ -30,20 +29,60 @@ class Virus(object):
 		# two parents or not.
 		self.reassorted = False 
 
-		# List of segments present in the virus.
-		self.segments = []
-		for i in range(0, num_segments):
-			segment = Segment(segment_number=i)
-			if generate_sequence == True:
-				segment.GenerateAndSetSequence()
-				self.segments.append(segment)
-			else:
-				self.segments.append(None)
+		# List of segments present in the virus. This is changed 
+		# in SmallFluVirus.
+		self.segments = self.GenerateSegments(num_segments)
 
 	def __repr__(self):
 		return str([self.GetID(), self.GetParent(), self.GetSequences()])
 
-	## ID Getters and Setters ##
+	def GenerateSegment(self, segment_number, sequence=None, length=10):
+		"""
+		This method creates a segment with the parameters passed in.
+
+		It is necessary because with some simulations, we do not necessarily
+		want a virus generated that has a random sequence. For example, the
+		SmallFluVirus has one segment (0) that is completely defined, and 
+		another segment (1) that is partially conserved and partially variable. 
+
+		Hence, with the SmallFluVirus, we want to initialize each segment
+		differently compared to a regular Virus. 
+		-	With a regular Virus, we can initialize the segments to be of 
+			equal length and completely random sequence.
+		-	With a SmallFluVirus, we need to initialize semgent 0 to have 300
+			n.t. mutated 1 n.t. off a fixed seed, and initialize segment 1 to 
+			have 200 n.t. mutated 1 n.t. off a fixed seed in addition to 100 
+			n.t. with 20 n.t. mutated off a fixed seed.
+		"""
+		segment = Segment(segment_number=segment_number, sequence=sequence,\
+			length=length)
+
+		if sequence == None:
+			segment.GenerateAndSetSequence()
+		
+		if sequence != None:
+			segment.SetSequence(sequence)
+
+		return segment
+
+	def GenerateSegments(self, num_segments, segment_lengths=(10, 10)):
+		"""
+		This method generates a list of segments with the tuple of segment 
+		lengths passed in as a parameter. This method basically automates
+		the process of 
+		"""
+		if num_segments != len(segment_lengths):
+			print 'ERROR: The number of segment lengths specified does not\
+					match the number of segments in the virus.'
+			pass
+		segments = []
+		for i, length in enumerate(segment_lengths):
+			segments.append(self.GenerateSegment(i, sequence=None, \
+				length=length))
+
+		return segments
+
+
 	def SetID(self, id):
 		"""This method sets the ID of the virus."""
 		self.id = id
@@ -106,8 +145,9 @@ class Virus(object):
 	def Mutate(self, segment=None):
 		"""
 		This method will randomly select one of the segments, then randomly 
-		select one position in the segment, and mutate that position. This 
-		is essentially syntactic sugar for mutating a segment at random.
+		select one position in the segment's sequence,and mutate that 
+		position. This is essentially syntactic sugar for mutating a segment 
+		at random.
 		"""
 		segment_to_mutate = choice(self.segments)
 		segment_to_mutate.Mutate()
