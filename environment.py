@@ -87,13 +87,16 @@ class Environment(object):
 			for i, segment in enumerate(virus2.GetSegments()):
 				segments_pool[i].append(segment)
 
-			# print segments_pool
-
+			# Check that the two parental viruses are of identical type. If they are,
+			# then create a new virus of the same type as the parental viruses.
+			# Otherwise, print error message.
 			new_id = len(self.viruses)
 			if isinstance(virus1, Virus) and isinstance(virus2, Virus):
 				new_virus = Virus(id=new_id, num_segments=num_segments)
 			if isinstance(virus1, SmallFluVirus) and isinstance(virus2, SmallFluVirus):
 				new_virus = SmallFluVirus(id=new_id, num_segments=num_segments)
+			else:
+				print "ERROR: The two viruses must be of the same type."
 			new_parents = set()
 
 			# For each pool of segments in the segment pool, randomly choose 
