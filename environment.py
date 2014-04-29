@@ -134,18 +134,3 @@ class Environment(object):
 			# Add the virus to the list of viruses.
 			self.viruses.append(new_virus)
 
-	def GenerateNetworkVisualization(self):
-
-		G = nx.MultiDiGraph()
-		for virus in self.GetViruses():
-			parent = virus.GetParent()
-			child = virus.GetID()
-			if parent == None:
-				G.add_node(child)
-			elif type(parent) == int:
-				G.add_edge(parent, child, weight=1)
-			elif len(parent) == 2:
-				G.add_edge(parent[0], child, weight=0.5)
-				G.add_edge(parent[1], child, weight=0.5)
-		
-		nx.draw_circular(G)
