@@ -1,7 +1,9 @@
 from virus import Virus
 from smallfluvirus import SmallFluVirus
-from random import choice, sample
+from random import choice, sample, randint
 from collections import defaultdict
+import networkx as nx
+
 
 class Environment(object):
 	"""docstring for Environment
@@ -10,7 +12,7 @@ class Environment(object):
 	can choose to manipulate the viruses at will.
 	"""
 	def __init__(self, num_viruses=1, virus_type='default'):
-		"""Initialize the environment with only 1 virus."""
+		"""Initialize the environment with only 1 default virus."""
 		super(Environment, self).__init__()
 		
 		# This list keeps track of the number of viruses present
@@ -35,6 +37,12 @@ class Environment(object):
 			" 0 and %s." % (len(self.viruses) - 1)
 		else:
 			return self.viruses[id]
+
+	def GetRandomVirus(self):
+		"""
+		This function returns a random virus from the population of viruses
+		"""
+		return self.viruses[randint(0, len(self.viruses)-1)]
 
 	def ReplicateAVirus(self, mutate=False):
 		"""
@@ -72,6 +80,7 @@ class Environment(object):
 		else:
 			# Create the dictionary that will hold the pool of viruses
 			segments_pool = dict()
+
 			# Identify how many segments there are
 			num_segments = len(virus1.GetSegments())
 
@@ -111,8 +120,6 @@ class Environment(object):
 				else:
 					new_parents.add(virus2.GetID())
 
-			# print new_parents
-
 			# Batch set the new virus' segments to the list of segments. See
 			# Virus class documentation on the use of this method.
 			new_virus.SetSegments(new_segments)
@@ -126,3 +133,19 @@ class Environment(object):
 
 			# Add the virus to the list of viruses.
 			self.viruses.append(new_virus)
+
+	def GenerateNetworkVisualization(self):
+
+		G = nx.MultiDiGraph()
+		for virus in self.GetViruses():
+			parent = virus.GetParent()
+			child = virus.GetID()
+			if parent == None:
+				G.add_node(child)
+			elif type(parent) == int:
+				G.add_edge(parent, child, weight=1)
+			elif len(parent) == 2:
+				G.add_edge(parent[0], child, weight=0.5)
+				G.add_edge(parent[1], child, weight=0.5)
+		
+		nx.draw_circular(G)
