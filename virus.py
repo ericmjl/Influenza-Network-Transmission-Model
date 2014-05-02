@@ -29,6 +29,8 @@ class Virus(object):
 		# two parents or not.
 		self.reassorted = False 
 
+		self.creation_date = None
+
 		# List of segments present in the virus. This is changed 
 		# in SmallFluVirus.
 		self.segments = self.GenerateSegments(num_segments)
