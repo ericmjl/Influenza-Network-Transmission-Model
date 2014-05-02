@@ -152,19 +152,28 @@ class Virus(object):
 		select one position in the segment's sequence,and mutate that 
 		position. This is essentially syntactic sugar for mutating a segment 
 		at random.
+
+		If a segment is specified, then that segment will be mutated.
 		"""
 		segment_to_mutate = choice(self.segments)
 		segment_to_mutate.Mutate()
 		self.SetMutatedStatus(True)
 
-	def Replicate(self, id, mutate=False):
+	def Replicate(self, id, mutate=False, mutate_variable_region=False,\
+		num_variable_positions=20):
 		"""
-		This method returns the virus itself, which can be assigned to 
-		another virus variable in the Environment (another class). 
+		This method returns a deep copy of the virus chosen to replicate.
 
 		If mutate is set to "False", then a perfect copy of the virus is 
-		returned; if mutate is set to "True", then a mutated version of the 
+		returned.
+
+		If mutate is set to "True", then a mutated version of the 
 		virus is returned.
+
+		If mutate_variable_region is set to "True" and the type of the virus
+		type is a SmallFluVirus, then mutate the variable region of the virus.
+
+		At the end, return the new virus.
 		"""
 		new_virus = deepcopy(self)
 		new_virus.SetID(id)
@@ -173,10 +182,19 @@ class Virus(object):
 		
 		if mutate == True:
 			new_virus.Mutate()
-			return new_virus
+			new_virus.SetMutatedStatus(True)
+
+		# We have checked that the Virus type is a SmallFluVirus() in the
+		# Environment module. This criteria is not mutually exclusive with the
+		# previous criteria.
+		if mutate_variable_region == True:
+			new_virus.MutateVariableRegion()
+			new_virus.SetMutatedStatus(True)
+
 		else:
 			new_virus.SetMutatedStatus(False)
-			return new_virus
+
+		return new_virus
 
 
 

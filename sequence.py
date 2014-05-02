@@ -93,8 +93,11 @@ class Sequence(object):
 			start = 0
 			end = len(self.sequence)
 
+		if num_positions == None:
+			print "ERROR: Specify the number of positions to mutate."
+
 		positions = ChoosePositions(start, end, num_positions)
-		# print positions
+		print positions
 
 		new_sequence = ''
 

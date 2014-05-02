@@ -59,10 +59,15 @@ class Segment(object):
 		"""This method gets a segment's number."""
 		return self.number
 
-	def Mutate(self, start=None, end=None, num_positions=1):
+	def Mutate(self):
 		"""
 		This method is syntactic sugar for mutating the segment's sequence.
 		See: Sequence.Mutate()
 		"""
 
-		self.GetSequence().Mutate(start=start, end=end, num_positions=num_positions)
+		self.GetSequence().Mutate()
+
+
+
+
+		

@@ -58,16 +58,16 @@ class SmallFluVirus(Virus):
 		# 1 mutation in constant region
 		self.MutateConstantRegion()
 		
-	def MutateVariableRegion(self, start=200, end=300):
+	def MutateVariableRegion(self, start=200, end=300, num_positions=20):
 		"""
 		This function specifically mutates 20 nucleotides in the variable 
 		region (200-300) of Segment 0 of the virus.
 		"""
-		self.segments[1].Mutate(start=start, end=end, num_positions=20)
+		self.segments[1].sequence.Mutate(start=start, end=end, num_positions=num_positions)
 
-	def MutateConstantRegion(self, start=0, end=200):
+	def MutateConstantRegion(self, start=0, end=200, num_positions=1):
 		"""
 		This function specifically mutates 1 nucleotide in the constant 
 		region (0-200) of Segment 0 of the virus.
 		"""
-		self.segments[1].Mutate(start=start, end=end, num_positions=1)
+		self.segments[1].sequence.Mutate(start=start, end=end, num_positions=num_positions)

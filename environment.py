@@ -44,19 +44,42 @@ class Environment(object):
 		"""
 		return self.viruses[randint(0, len(self.viruses)-1)]
 
-	def ReplicateAVirus(self, mutate=False):
+	def ReplicateAVirus(self, mutate=False, mutate_variable_region=False, \
+		num_variable_positions=20):
 		"""
 		This method picks a virus at random and replicates it.
 
-		One can set the "mutate" parameter to be True or False. This will set
-		whether the virus will mutate upon replication.
+		If the "mutate" parameter is set to True, the virus will mutate in one
+		randomly chosen position, including any "variable" regions if present.
+		Otherwise, this will not happen.
+
+		If the "mutate_variable_region" parameter is set to True, the virus will
+		first be checked to be a "smallfluvirus". If that is also true, then the 
+		variable region of the smallfluvirus will undergo 20 point mutations.
+		Otherwise, the mutate_variable_region parameter will be ignored.
 		"""
 		# Select a virus to replicate, generate a new ID number.
 		virus = choice(self.viruses)
 		new_id = len(self.viruses)
 
-		# Replicate the virus.
-		new_virus = virus.Replicate(mutate=mutate, id=new_id)
+		# If the type of the virus is a SmallFluVirus and mutate_variable_region is 
+		# True, then replicate the virus while mutating the variable region.
+		if isinstance(virus, SmallFluVirus) and mutate_variable_region == True:
+			# Replicate the virus.
+			print "The virus is a Small Flu Virus."
+			new_virus = virus.Replicate(id=new_id, mutate=mutate, \
+				mutate_variable_region=mutate_variable_region)
+
+		# If the virus is not a smallfluvirus yet mutate_variable_region is True, then
+		# print an error and ignore the mutate_variable_region request.
+		elif not isinstance(virus, SmallFluVirus) and mutate_variable_region == True:
+			print "WARNING: You are requesting to mutate the variable region of a " + \
+					"virus that contains no variable region. Request ignored."
+			new_virus = virus.Replicate(mutate=mutate, id=new_id)
+
+		# Otherwise, simply replicate and ignore the mutate_variable_region parameter.
+		else:
+			new_virus = virus.Replicate(mutate=mutate, id=new_id)
 
 		# Append the virus to the virus list.
 		self.viruses.append(new_virus)
