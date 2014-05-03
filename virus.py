@@ -29,6 +29,7 @@ class Virus(object):
 		# two parents or not.
 		self.reassorted = False 
 
+		# An integer number describing the time step in which a virus was generated.
 		self.creation_date = None
 
 		# List of segments present in the virus. This is changed 
@@ -37,6 +38,56 @@ class Virus(object):
 
 	def __repr__(self):
 		return str([self.GetID(), self.GetParent()])
+
+	def Mutate(self, num_positions, randomly_choose_segment=True, \
+		segment=None):
+		"""
+		By default, a random segment will be chosen to be mutated. From that segment's
+		sequence, a random position will be chosen to be changed.
+
+		This method will automatically set the mtuated status of the virus to True.
+		"""
+		if randomly_choose_segment == True:
+			segment_to_mutate = choice(self.GetSegments())
+
+		if randomly_choose_segment == False:
+			if segment == None:
+				raise Error("If you are not opting to randomly mutate a virus, then " + \
+					"you must specify the segment to be mutated.")
+			else:
+				segment_to_mutate = self.GetSegments()[segment]
+		segment_to_mutate.Mutate(num_positions)
+		self.SetMutatedStatus(True)
+
+	def Replicate(self, id, date):
+		"""
+		NOTE: THIS FUNCTION LOOKS WELL-CODED ENOUGH. DO NOT MODIFY UNNECESSARILY.
+
+		This method returns a deep copy of the virus chosen to replicate.
+
+		At the end, return the new virus.
+		"""
+		new_virus = deepcopy(self)
+		new_virus.SetCreationDate(date)
+		new_virus.SetID(id)
+		new_virus.SetParent(self.GetID())
+		new_virus.SetReassortedStatus(False)
+		
+		return new_virus
+
+	def ReplicateAndMutate(self, id, date, num_positions_to_mutate, \
+		randomly_choose_segment=True, segment=None):
+		"""
+		This method will take a specified virus and replicate it using the Replicate()
+		function, and then mutate a specified segment with a specified number of 
+		mutations. 
+		"""
+		new_virus = self.Replicate(id, date)
+		new_virus.Mutate(num_positions_to_mutate, \
+			randomly_choose_segment=randomly_choose_segment,\
+			segment=segment)
+
+		return new_virus
 
 	def GenerateSegment(self, segment_number, sequence=None, length=10):
 		"""
@@ -67,11 +118,11 @@ class Virus(object):
 
 		return segment
 
-	def GenerateSegments(self, num_segments, segment_lengths=(10, 10)):
+	def GenerateSegments(self, num_segments=2, segment_lengths=(10, 10)):
 		"""
 		This method generates a list of segments with the tuple of segment 
 		lengths passed in as a parameter. This method basically automates
-		the process of 
+		the process of creating segments.
 		"""
 		if num_segments != len(segment_lengths):
 			print 'ERROR: The number of segment lengths specified does not\
@@ -84,21 +135,23 @@ class Virus(object):
 
 		return segments
 
+	def GetCreationDate(self):
+		"""
+		This method returns the creation date of the virus.
+		"""
+		return self.creation_date
 
-	def SetID(self, id):
-		"""This method sets the ID of the virus."""
-		self.id = id
+	def GetGenomeLength(self):
+		"""
+		This method returns the length of the virus genome, summed over all segments 
+		in the viral genome.
+		"""
+		length = sum(segment.length for segment in self.GetSegments())
+		return length
 
 	def GetID(self):
 		"""This method returns the ID of the virus."""
 		return self.id
-
-	def SetParent(self, parent_id):
-		"""
-		This method records the ID of the virus' parent prior to 
-		replication.
-		"""
-		self.parent = parent_id
 
 	def GetParent(self):
 		"""This method returns the ID of the virus' parent."""
@@ -112,14 +165,6 @@ class Virus(object):
 		"""This method will return the particular segment specified."""
 		return self.segments[segment_number]
 
-	def SetSegments(self, list_of_segments):
-		"""
-		This method will override all segments present in the virus. This
-		is essentially syntactic sugar for changing a virus wholesale;
-		however, use with caution.
-		"""
-		self.segments = list_of_segments
-
 	def GetSequences(self):
 		"""
 		This method will return a list of sequences, one for each 
@@ -132,9 +177,36 @@ class Virus(object):
 
 		return sequences
 
+	def SetCreationDate(self, date):
+		"""This method sets the creation date of the virus."""
+		self.creation_date = date
+
+	def SetID(self, id):
+		"""This method sets the ID of the virus."""
+		self.id = id
+
 	def SetMutatedStatus(self, status):
 		"""This is a helper method that will set the mutated status."""
 		self.mutated = status
+
+	def SetParent(self, parent_id):
+		"""
+		This method records the ID of the virus' parent prior to 
+		replication.
+		"""
+		self.parent = parent_id
+
+	def SetSegments(self, list_of_segments):
+		"""
+		This method will override all segments present in the virus. This
+		is essentially syntactic sugar for changing a virus wholesale;
+		however, use with caution.
+		"""
+		self.segments = list_of_segments
+
+	def SetReassortedStatus(self, status):
+		"""This is a helper method that will set the reassortant status."""
+		self.reassorted = status
 
 	def IsMutated(self):
 		"""This method returns the mutated status of the virus."""
@@ -143,61 +215,5 @@ class Virus(object):
 	def IsReassorted(self):
 		"""This method returns the reassortant status of the virus."""
 		return self.reassorted
-
-	def SetReassortedStatus(self, status):
-		"""This is a helper method that will set the reassortant status."""
-		self.reassorted = status
-
-	def Mutate(self, segment=None):
-		"""
-		This method will randomly select one of the segments, then randomly 
-		select one position in the segment's sequence,and mutate that 
-		position. This is essentially syntactic sugar for mutating a segment 
-		at random.
-
-		If a segment is specified, then that segment will be mutated.
-		"""
-		segment_to_mutate = choice(self.segments)
-		segment_to_mutate.Mutate()
-		self.SetMutatedStatus(True)
-
-	def Replicate(self, id, mutate=False, mutate_variable_region=False,\
-		num_variable_positions=20):
-		"""
-		This method returns a deep copy of the virus chosen to replicate.
-
-		If mutate is set to "False", then a perfect copy of the virus is 
-		returned.
-
-		If mutate is set to "True", then a mutated version of the 
-		virus is returned.
-
-		If mutate_variable_region is set to "True" and the type of the virus
-		type is a SmallFluVirus, then mutate the variable region of the virus.
-
-		At the end, return the new virus.
-		"""
-		new_virus = deepcopy(self)
-		new_virus.SetID(id)
-		new_virus.SetParent(self.GetID())
-		new_virus.SetReassortedStatus(False)
-		
-		if mutate == True:
-			new_virus.Mutate()
-			new_virus.SetMutatedStatus(True)
-
-		# We have checked that the Virus type is a SmallFluVirus() in the
-		# Environment module. This criteria is not mutually exclusive with the
-		# previous criteria.
-		if mutate_variable_region == True:
-			new_virus.MutateVariableRegion()
-			new_virus.SetMutatedStatus(True)
-
-		else:
-			new_virus.SetMutatedStatus(False)
-
-		return new_virus
-
-
 
 

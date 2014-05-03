@@ -54,6 +54,11 @@ class Sequence(object):
 		self.sequence += sequence
 
 	def GetString(self):
+		"""
+		This method returns a string representation of the sequence. This is
+		syntactic sugar for the __repr__ method, to help make code in other
+		places look cleaner.
+		"""
 		return str(self.sequence)
 
 	def Mutate(self, start=None, end=None, num_positions=1):
@@ -66,6 +71,8 @@ class Sequence(object):
 
 		If you wish to mutate more than 1 position in the specified region, 
 		then specify the num_positions that you wish to mutate.
+
+		NOTE: THIS FUNCTION IS WELL-INSULATED. DO NOT CHANGE OR MODIFY.
 		"""
 
 		def ChooseNewLetter(letter):

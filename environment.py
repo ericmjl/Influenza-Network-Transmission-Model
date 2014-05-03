@@ -3,6 +3,7 @@ from smallfluvirus import SmallFluVirus
 from random import choice, sample, randint
 from collections import defaultdict
 import networkx as nx
+from numpy.random import normal, binomial
 
 
 class Environment(object):
@@ -11,6 +12,8 @@ class Environment(object):
 	The Environment contains a bunch of viruses, and in the Environment, one 
 	can choose to manipulate the viruses at will.
 	"""
+
+
 	def __init__(self, num_viruses=1, virus_type='default'):
 		"""Initialize the environment with only 1 default virus."""
 		super(Environment, self).__init__()
@@ -24,7 +27,18 @@ class Environment(object):
 				virus = SmallFluVirus(id=i)
 			self.viruses.append(virus)
 
+		# This variable keeps track of the number of viruses present
 		self.num_viruses = len(self.viruses)
+
+		# The number of times that the environment simulation will run.
+		self.timesteps = 100
+
+		# The current timestep of the environment.
+		self.current_timestep = 0
+
+		# The mutation rate, currently hardcoded, but change later.
+		# TODO: CHANGE MUTATION RATE TO BE A PARAMETER
+		self.mutation_rate = 0.008
 
 	def GetViruses(self):
 		"""This method returns the list of viruses in the environment."""
@@ -44,46 +58,34 @@ class Environment(object):
 		"""
 		return self.viruses[randint(0, len(self.viruses)-1)]
 
-	def ReplicateAVirus(self, mutate=False, mutate_variable_region=False, \
-		num_variable_positions=20):
+	def GetLastVirus(self):
 		"""
-		This method picks a virus at random and replicates it.
-
-		If the "mutate" parameter is set to True, the virus will mutate in one
-		randomly chosen position, including any "variable" regions if present.
-		Otherwise, this will not happen.
-
-		If the "mutate_variable_region" parameter is set to True, the virus will
-		first be checked to be a "smallfluvirus". If that is also true, then the 
-		variable region of the smallfluvirus will undergo 20 point mutations.
-		Otherwise, the mutate_variable_region parameter will be ignored.
+		This function returns the last virus to be generated.
 		"""
-		# Select a virus to replicate, generate a new ID number.
-		virus = choice(self.viruses)
-		new_id = len(self.viruses)
+		return self.viruses[-1]
 
-		# If the type of the virus is a SmallFluVirus and mutate_variable_region is 
-		# True, then replicate the virus while mutating the variable region.
-		if isinstance(virus, SmallFluVirus) and mutate_variable_region == True:
-			# Replicate the virus.
-			print "The virus is a Small Flu Virus."
-			new_virus = virus.Replicate(id=new_id, mutate=mutate, \
-				mutate_variable_region=mutate_variable_region)
+	def ReplicateVirus(self, virus=None, date=None):
+		"""
+		This method replicates a specified virus.
+		"""
+		# Check to make sure that the virus is a valid virus object.
+		if type(virus) not in [Virus, SmallFluVirus]:
+			raise TypeError('You must specify a virus to replicate.')
+			pass
 
-		# If the virus is not a smallfluvirus yet mutate_variable_region is True, then
-		# print an error and ignore the mutate_variable_region request.
-		elif not isinstance(virus, SmallFluVirus) and mutate_variable_region == True:
-			print "WARNING: You are requesting to mutate the variable region of a " + \
-					"virus that contains no variable region. Request ignored."
-			new_virus = virus.Replicate(mutate=mutate, id=new_id)
-
-		# Otherwise, simply replicate and ignore the mutate_variable_region parameter.
+		# Check to make sure that the timestamp of the virus is specified.
+		if date == None:
+			raise ValueError('You must specify a time stamp for the virus.')
+			pass
 		else:
-			new_virus = virus.Replicate(mutate=mutate, id=new_id)
+			new_id = len(self.GetViruses())
+			new_virus = virus.Replicate(id=new_id, date=date)
 
-		# Append the virus to the virus list.
-		self.viruses.append(new_virus)
+			# Append the virus to the virus list.
+			self.viruses.append(new_virus)
 
+	def MutateVirus(self, virus=None):
+		
 	def RandomlyReassortTwoViruses(self, mutate=False):
 		"""
 		Here, two viruses will be selected at random from the list of viruses, 
@@ -97,8 +99,8 @@ class Environment(object):
 		# Randomly pick two viruses
 		virus1, virus2 = sample(self.viruses, 2)
 		if len(virus1.GetSegments()) != len(virus2.GetSegments()):
-			print "ERROR: Virus %s and Virus %s do not have the same number \
-				of segments!" % (virus1.GetID(), virus2.GetID())
+			raise VirusError("ERROR: Virus %s and Virus %s do not have the same number \
+				of segments!" % (virus1.GetID(), virus2.GetID())) 
 
 		else:
 			# Create the dictionary that will hold the pool of viruses
@@ -156,4 +158,26 @@ class Environment(object):
 
 			# Add the virus to the list of viruses.
 			self.viruses.append(new_virus)
+
+	def SampleNumberOfDescendants(self, mean, stdev):
+		"""
+		This method returns a rounded number of descendents drawn from a 
+		normal distribution. Mean and standard deviation have to be specified.
+		"""
+		return int(round(normal(mean, stdev)))
+
+	def SampleNumberOfMutations(self, mutation_rate, virus):
+		"""
+		This method returns a rounded number of mutations to make, drawn from a 
+		binomial distribution. Number of positions to choose from is the length 
+		of the virus genome, and the mutation rate is specified.
+		"""
+
+		length = virus.GetGenomeLength()
+
+		return round(binomial(length, mutation_rate))
+
+
+
+
 
