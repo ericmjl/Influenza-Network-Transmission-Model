@@ -29,8 +29,8 @@ class SmallFluVirus(Virus):
 
 		"""
 		This function is a replacement function for initializing the virus. 
-		Specifically, a SmallFluVirus is initialized from a starting seed sequence, 
-		then it is mutated.
+		Specifically, a SmallFluVirus is initialized from a starting seed 
+		sequence, then it is mutated.
 		"""
 
 		# This is the seed sequence for a SmallFluVirus' Segment 0.
@@ -73,9 +73,9 @@ class SmallFluVirus(Virus):
 	def Mutate(self, mutate_anywhere=True, \
 		mutate_variable_region=False, mutate_constant_region=False):
 		"""
-		This function is a replacement implementation of the Virus class "Mutate" 
-		function. The mutation of a SmallFluVirus is different from a Virus in
-		the following ways:
+		This function is a replacement implementation of the Virus class 
+		"Mutate" function. The mutation of a SmallFluVirus is different from a 
+		Virus in the following ways:
 
 		- Specify whether to mutate anywhere.
 		- Specify whether to mutate in constant region
@@ -92,26 +92,11 @@ class SmallFluVirus(Virus):
 		if mutate_variable_region == True:
 			self.MutateVariableRegion()
 
-	# The following may not be needed anymore 
-	# def ReplicateAndMutate(self, id, date, num_positions, mutate_anywhere, \
-	# 	mutate_variable_region, mutate_constant_region ):
-	# 	"""
-	# 	This function is a replacement implementation of the Virus class
-	# 	"ReplicateAndMutate" function. A second implementation is necessary because
-	# 	the Mutate function takes a different set of parameters. 
-	# 	"""
-
-	# 	new_virus = self.Replicate(id, date)
-	# 	new_virus.Mutate(mutate_anywhere, mutate_variable_region, \
-	# 		mutate_constant_region)
-
-	# 	return new_virus	
-
 	def MutateVariableRegion(self, start=200, end=300):
 		"""
-		This function specifically mutates a random number of nucleotides in the 
-		variable region (200-300) of Segment 0 of the virus. The number of mutations
-		made follows a Uniform distribution.
+		This function specifically mutates a random number of nucleotides in 
+		the variable region (200-300) of Segment 0 of the virus. The number of 
+		mutations made follows a Uniform distribution.
 
 		num_positions ~ U(10,20).
 		"""
@@ -122,9 +107,9 @@ class SmallFluVirus(Virus):
 
 	def MutateConstantRegion(self, start=0, end=200):
 		"""
-		This function specifically mutates a random number of nucleotides in the 
-		constant region (0-200) of Segment 0 of the virus. The number of mutations 
-		made follows a Binomial distribution 
+		This function specifically mutates a random number of nucleotides in 
+		the constant region (0-200) of Segment 0 of the virus. The number of 
+		mutations made follows a Binomial distribution 
 
 		num_positions ~ Bin(length of segment, segment mutation rate)
 		

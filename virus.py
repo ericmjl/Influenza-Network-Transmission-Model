@@ -27,7 +27,8 @@ class Virus(object):
 		# two parents or not.
 		self.reassorted = False 
 
-		# An integer number describing the time step in which a virus was generated.
+		# An integer number describing the time step in which a virus was 
+		# generated.
 		self.creation_date = creation_date
 
 		# List of segments present in the virus. This is changed 
@@ -72,9 +73,9 @@ class Virus(object):
 	def ReplicateAndMutate(self, id, date, num_positions_to_mutate, \
 		randomly_choose_segment=True, segment=None):
 		"""
-		This method will take a specified virus and replicate it using the Replicate()
-		function, and then mutate a specified segment with a specified number of 
-		mutations. 
+		This method will take a specified virus and replicate it using the 
+		Replicate() function, and then mutate a specified segment with a 
+		specified number of mutations. 
 		"""
 		new_virus = self.Replicate(id, date)
 		new_virus.Mutate(num_positions_to_mutate, \
@@ -102,8 +103,8 @@ class Virus(object):
 			have 200 n.t. mutated 1 n.t. off a fixed seed in addition to 100 
 			n.t. with 20 n.t. mutated off a fixed seed.
 		"""
-		segment = Segment(segment_number=segment_number, mutation_rate=mutation_rate, \
-			sequence=sequence, length=length)
+		segment = Segment(segment_number=segment_number, \
+			mutation_rate=mutation_rate, sequence=sequence, length=length)
 
 		if sequence == None:
 			segment.GenerateAndSetSequence()
@@ -120,8 +121,8 @@ class Virus(object):
 		the process of creating segments.
 		"""
 		if num_segments != len(segment_lengths):
-			raise ValueError('The number of segment lengths specified does not ' + \
-				'match the number of segments in the virus.')
+			raise ValueError('The number of segment lengths specified does ' + \
+				'not match the number of segments in the virus.')
 			pass
 		segments = []
 		for i, length in enumerate(segment_lengths):
@@ -138,8 +139,8 @@ class Virus(object):
 
 	def GetGenomeLength(self):
 		"""
-		This method returns the length of the virus genome, summed over all segments 
-		in the viral genome.
+		This method returns the length of the virus genome, summed over all    
+		segments in the viral genome.
 		"""
 		length = sum(segment.length for segment in self.GetSegments())
 		return length
