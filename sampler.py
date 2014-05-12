@@ -5,13 +5,15 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from datetime import datetime
 import networkx as nx
+from sklearn.cluster import AffinityPropagation
 
 
 class Sampler(object):
 	"""The Sampler class samples a bunch of viruses from an Environment."""
-	def __init__(self):
+	def __init__(self, directory_prefix):
 		super(Sampler, self).__init__() 
 		self.sampled_viruses = []
+		self.directory_prefix = directory_prefix
 
 	def SampleVirusesFromEnvironment(self, environment, n):
 		"""
@@ -21,13 +23,13 @@ class Sampler(object):
 		if n == 'all':
 			self.sampled_viruses = environment.GetViruses()
 
-		elif not isinstance(n, int) or n < 0:
-			print "ERROR: Please change n to an integer number greater than \
-					zero."
+		# elif not isinstance(n, int) or n < 0:
+		# 	print "ERROR: Please change n to an integer number greater than \
+		# 			zero."
 
-		elif not isinstance(environment, Environment):
-			print "ERROR: You have not specified an environment to sample \
-					viruses from."
+		# elif not isinstance(environment, Environment):
+		# 	print "ERROR: You have not specified an environment to sample \
+		# 			viruses from."
 
 		else:
 			viruses = environment.GetViruses()
@@ -51,7 +53,7 @@ class Sampler(object):
 
 		return self.sampled_viruses[randint(0, len(self.sampled_viruses) - 1)]
 
-	def DumpSequences(self):
+	def DumpSequences(self, run_number):
 		"""
 		This function takes all of the viruses that have been sampled from the 
 		environment, and writes their sequences to FASTA files. 
@@ -74,28 +76,33 @@ class Sampler(object):
 		# segment to the appropriate list.
 		for virus in self.GetSampledViruses():
 			for i in range(num_segments):
+				virus_id = "%s_%s" % (str(virus.GetID()), str(virus.GetCreationDate()))
 				record = SeqRecord(Seq(virus.GetSegment(i).GetSequence().GetString()),\
-					id=str(virus.GetID()), description="")
+					id=str(virus.GetID()), description=str(virus.GetCreationDate()))
 				segments[i].append(record)
 
 		# Write the sequences to file with the current date and time present.
-		current_time = datetime.now()
+		# current_time = datetime.now()
 		for i in range(num_segments):
 			num_sequences = len(segments[i])
-			SeqIO.write(segments[i], "%s Simulation Segment %s %s Sequences.fasta" % \
-				(current_time, i, num_sequences), "fasta")
+			SeqIO.write(segments[i], "%s/Run %s Simulation Segment %s Sequences.fasta" % \
+				(self.directory_prefix, run_number, i), "fasta")
 
-	def GenerateNetworkVisualization(self):
+	def GenerateNetwork(self):
 		G = nx.MultiDiGraph()
 		for virus in self.GetSampledViruses():
+			# print virus
 			parent = virus.GetParent()
 			child = virus.GetID()
+			# print parent, child
 			if parent == None:
 				G.add_node(child)
-			elif type(parent) == int:
-				G.add_edge(parent, child, weight=1)
 			elif len(parent) == 2:
 				G.add_edge(parent[0], child, weight=0.5)
 				G.add_edge(parent[1], child, weight=0.5)
-		
+			elif type(parent) != None:
+				G.add_edge(parent, child, weight=1)
+		return G
+
+	def GenerateNetworkVisualization(self, G):
 		nx.draw_circular(G)

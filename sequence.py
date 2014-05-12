@@ -61,7 +61,7 @@ class Sequence(object):
 		"""
 		return str(self.sequence)
 
-	def Mutate(self, start=None, end=None, num_positions=1):
+	def Mutate(self, start=None, end=None, num_positions=None):
 		"""
 		This method will randomly pick a letter in the segment's sequence,
 		and proceed to mutate that letter.
@@ -101,10 +101,9 @@ class Sequence(object):
 			end = len(self.sequence)
 
 		if num_positions == None:
-			print "ERROR: Specify the number of positions to mutate."
+			raise ValueError("Specify the number of positions to mutate.")
 
 		positions = ChoosePositions(start, end, num_positions)
-		print positions
 
 		new_sequence = ''
 

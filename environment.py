@@ -22,9 +22,9 @@ class Environment(object):
 		self.viruses = []
 		for i in range(num_viruses):
 			if virus_type == 'default':
-				virus = Virus(id=i)
+				virus = Virus(id='Virus%s' % i, creation_date=0)
 			if virus_type == 'influenza':
-				virus = SmallFluVirus(id=i)
+				virus = SmallFluVirus(id='Virus%s' % i, creation_date=0)
 			self.viruses.append(virus)
 
 		# This variable keeps track of the number of viruses present
@@ -36,27 +36,20 @@ class Environment(object):
 		# The current timestep of the environment.
 		self.current_timestep = 0
 
-		# The mutation rate, currently hardcoded, but change later.
-		# TODO: CHANGE MUTATION RATE TO BE A PARAMETER
-		self.mutation_rate = 0.008
-
 	def GetViruses(self):
 		"""This method returns the list of viruses in the environment."""
 		return self.viruses
 
 	def GetVirus(self, id):
 		"""This method returns a specified virus from the environment."""
-		if id < 0 or id > len(self.viruses) - 1:
-			print "ERROR: The virus ID should be between" + \
-			" 0 and %s." % (len(self.viruses) - 1)
-		else:
-			return self.viruses[id]
+		virus = [v for v in self.GetViruses() if v.id == id]
+		return virus[0]
 
 	def GetRandomVirus(self):
 		"""
 		This function returns a random virus from the population of viruses
 		"""
-		return self.viruses[randint(0, len(self.viruses)-1)]
+		return sample(self.viruses, 1)[0]
 
 	def GetLastVirus(self):
 		"""
@@ -66,27 +59,54 @@ class Environment(object):
 
 	def ReplicateVirus(self, virus=None, date=None):
 		"""
-		This method replicates a specified virus.
+		This method replicates a specified virus. The number of progeny that come out 
+		follows a normal distribution, rounded off to the nearest integer.
+
+		num_of_progeny ~ N(1.2, 0.5)
 		"""
+
 		# Check to make sure that the virus is a valid virus object.
 		if type(virus) not in [Virus, SmallFluVirus]:
-			raise TypeError('You must specify a virus to replicate.')
+			raise ValueError('You must specify a virus to replicate.')
 			pass
 
 		# Check to make sure that the timestamp of the virus is specified.
 		if date == None:
 			raise ValueError('You must specify a time stamp for the virus.')
 			pass
-		else:
-			new_id = len(self.GetViruses())
-			new_virus = virus.Replicate(id=new_id, date=date)
 
-			# Append the virus to the virus list.
-			self.viruses.append(new_virus)
+		else:
+			num_of_progeny = self.SampleNumberOfDescendants(1.2, 0.5)
+
+			counter = 0
+			while counter < num_of_progeny:
+				# Generate new virus with new ID.
+				new_id = len(self.GetViruses())
+				new_virus = virus.Replicate(id=new_id, date=date)
+				new_virus.Mutate()
+
+				# Append the virus to the virus list.
+				self.viruses.append(new_virus)
+				counter += 1
 
 	def MutateVirus(self, virus=None):
+		"""
+		This method takes a specified virus and mutates it.
+
+		If the virus is not a Virus or SmallFluVirus, an error message will be raised.
+
+		If no virus is specified, then the last virus will be mutated.
+
+		Otherwise, the specified virus will be mutated.
+		"""
+
+		# Check to make sure that the virus has the correct type.
+		if virus == None:
+			virus = self.GetLastVirus()
+
+		virus.Mutate()
 		
-	def RandomlyReassortTwoViruses(self, mutate=False):
+	def RandomlyReassortTwoViruses(self, date, mutate=False):
 		"""
 		Here, two viruses will be selected at random from the list of viruses, 
 		and a new virus containing a combination of segments, drawn at random 
@@ -99,7 +119,7 @@ class Environment(object):
 		# Randomly pick two viruses
 		virus1, virus2 = sample(self.viruses, 2)
 		if len(virus1.GetSegments()) != len(virus2.GetSegments()):
-			raise VirusError("ERROR: Virus %s and Virus %s do not have the same number \
+			raise TypeError("ERROR: Virus %s and Virus %s do not have the same number \
 				of segments!" % (virus1.GetID(), virus2.GetID())) 
 
 		else:
@@ -124,11 +144,13 @@ class Environment(object):
 			# Check that the two parental viruses are of identical type. If they are,
 			# then create a new virus of the same type as the parental viruses.
 			# Otherwise, print error message.
-			new_id = len(self.viruses)
+			new_id = "Virus%s" % len(self.viruses)
 			if isinstance(virus1, Virus) and isinstance(virus2, Virus):
-				new_virus = Virus(id=new_id, num_segments=num_segments)
+				new_virus = Virus(creation_date=date, \
+					id=new_id, num_segments=num_segments)
 			if isinstance(virus1, SmallFluVirus) and isinstance(virus2, SmallFluVirus):
-				new_virus = SmallFluVirus(id=new_id, num_segments=num_segments)
+				new_virus = SmallFluVirus(creation_date=date, \
+					id=new_id, num_segments=num_segments)
 			else:
 				print "ERROR: The two viruses must be of the same type."
 			new_parents = set()
@@ -148,7 +170,7 @@ class Environment(object):
 			# Batch set the new virus' segments to the list of segments. See
 			# Virus class documentation on the use of this method.
 			new_virus.SetSegments(new_segments)
-			new_virus.SetReassortedStatus(True)
+			new_virus.SetReassortedStatus(True)			
 			if len(new_parents) == 1:
 				new_virus.SetParent(tuple(new_parents)[0])
 				new_virus.SetReassortedStatus(False)

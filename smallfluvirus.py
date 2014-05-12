@@ -1,5 +1,6 @@
 from virus import Virus
-from random import choice
+from random import choice, randint
+from numpy.random import binomial, normal
 
 class SmallFluVirus(Virus):
 	"""
@@ -20,10 +21,11 @@ class SmallFluVirus(Virus):
 	5 positions will mutate at one time, as opposed to 1.
 
 	"""
-	def __init__(self, id, num_segments=2, parent=None, \
+	def __init__(self, id, creation_date, num_segments=2, parent=None, \
 		generate_sequence=False):
-		Virus.__init__(self, id=id, num_segments=num_segments, \
-			parent=parent, generate_sequence=generate_sequence)
+		Virus.__init__(self, id=id, creation_date=creation_date, \
+			num_segments=num_segments, parent=parent, \
+			generate_sequence=generate_sequence)
 
 		"""
 		This function is a replacement function for initializing the virus. 
@@ -58,30 +60,31 @@ class SmallFluVirus(Virus):
 
 		# Initialize the virus with some mutations, so that it is 
 		# distinguishable from another virus.
-		# A random mutation anywhere in genome.
-		self.Mutate(num_positions=1) 
 
-		# Mutate variable region with default parameters
+		# Firstly, introduce a random mutation anywhere in genome.
+		self.Mutate() 
+
+		# Mutate the variable region with default parameters
 		self.MutateVariableRegion() 
 		
-		# Mutate constant region with default parameters
+		# Mutate the constant region with default parameters
 		self.MutateConstantRegion()
 		
-	def Mutate(self, num_positions, mutate_anywhere=True, \
-		mutate_variable_region=True, mutate_constant_region=False):
+	def Mutate(self, mutate_anywhere=True, \
+		mutate_variable_region=False, mutate_constant_region=False):
 		"""
 		This function is a replacement implementation of the Virus class "Mutate" 
 		function. The mutation of a SmallFluVirus is different from a Virus in
 		the following ways:
 
-		- SmallFluVirus can mutate specified # of positions anywhere.
-		- SmallFluVirus can mutate pre-coded # of times in the variable region.
-		- SmallFluVirus can mutate specified # of positions in constant region.
+		- Specify whether to mutate anywhere.
+		- Specify whether to mutate in constant region
+		- Specify whether to mutate in variable region
 		"""
 
 		if mutate_anywhere == True:
 			segment_to_mutate = choice(self.GetSegments())
-			segment_to_mutate.Mutate(num_positions)
+			segment_to_mutate.Mutate()
 
 		if mutate_constant_region == True:
 			self.MutateConstantRegion()
@@ -89,32 +92,46 @@ class SmallFluVirus(Virus):
 		if mutate_variable_region == True:
 			self.MutateVariableRegion()
 
-	def ReplicateAndMutate(self, id, date, num_positions, mutate_anywhere, \
-		mutate_variable_region, mutate_constant_region ):
-		"""
-		This function is a replacement implementation of the Virus class
-		"ReplicateAndMutate" function. A second implementation is necessary because
-		the Mutate function takes a different set of parameters. 
-		"""
+	# The following may not be needed anymore 
+	# def ReplicateAndMutate(self, id, date, num_positions, mutate_anywhere, \
+	# 	mutate_variable_region, mutate_constant_region ):
+	# 	"""
+	# 	This function is a replacement implementation of the Virus class
+	# 	"ReplicateAndMutate" function. A second implementation is necessary because
+	# 	the Mutate function takes a different set of parameters. 
+	# 	"""
 
-		new_virus = self.Replicate(id, date)
-		new_virus.Mutate(num_positions, mutate_anywhere, mutate_variable_region, \
-			mutate_constant_region)
+	# 	new_virus = self.Replicate(id, date)
+	# 	new_virus.Mutate(mutate_anywhere, mutate_variable_region, \
+	# 		mutate_constant_region)
 
-		return new_virus	
+	# 	return new_virus	
 
-	def MutateVariableRegion(self, start=200, end=300, num_positions=20):
+	def MutateVariableRegion(self, start=200, end=300):
 		"""
-		This function specifically mutates 20 nucleotides in the variable 
-		region (200-300) of Segment 0 of the virus.
+		This function specifically mutates a random number of nucleotides in the 
+		variable region (200-300) of Segment 0 of the virus. The number of mutations
+		made follows a Uniform distribution.
+
+		num_positions ~ U(10,20).
 		"""
+		num_positions = randint(20,60)
+
 		self.segments[1].sequence.Mutate(start=start, end=end, \
 			num_positions=num_positions)
 
-	def MutateConstantRegion(self, start=0, end=200, num_positions=1):
+	def MutateConstantRegion(self, start=0, end=200):
 		"""
-		This function specifically mutates 1 nucleotide in the constant 
-		region (0-200) of Segment 0 of the virus.
+		This function specifically mutates a random number of nucleotides in the 
+		constant region (0-200) of Segment 0 of the virus. The number of mutations 
+		made follows a Binomial distribution 
+
+		num_positions ~ Bin(length of segment, segment mutation rate)
+		
 		"""
+		n = self.segments[0].length
+		p = self.segments[0].mutation_rate
+		num_positions = binomial(n, p)
+
 		self.segments[1].sequence.Mutate(start=start, end=end, \
 			num_positions=num_positions)

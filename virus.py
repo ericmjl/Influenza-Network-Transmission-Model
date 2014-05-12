@@ -10,7 +10,7 @@ class Virus(object):
 	length 10 nucleotides.
 
 	"""
-	def __init__(self, id, num_segments=2, parent=None, \
+	def __init__(self, id, creation_date, num_segments=2, parent=None, \
 		generate_sequence=True):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
@@ -22,15 +22,13 @@ class Virus(object):
 		self.id = id 
 		# variable that records the id of the parent Virus in the Environment.
 		self.parent = parent 
-		# Boolean variable that records whether this virus was mutated from the
-		# parent virus or not.
-		self.mutated = False 
+
 		# Boolean variable that records whether this virus was reassorted from 
 		# two parents or not.
 		self.reassorted = False 
 
 		# An integer number describing the time step in which a virus was generated.
-		self.creation_date = None
+		self.creation_date = creation_date
 
 		# List of segments present in the virus. This is changed 
 		# in SmallFluVirus.
@@ -39,26 +37,22 @@ class Virus(object):
 	def __repr__(self):
 		return str([self.GetID(), self.GetParent()])
 
-	def Mutate(self, num_positions, randomly_choose_segment=True, \
-		segment=None):
+	def Mutate(self, segment=None):
 		"""
-		By default, a random segment will be chosen to be mutated. From that segment's
-		sequence, a random position will be chosen to be changed.
+		This method will mutate a specified segment.
 
-		This method will automatically set the mtuated status of the virus to True.
+		If the segment is specified, then that segment will be mutated.
+
+		If the segment is not specified, then a randomly chosen segment 
+		will be mutated.
 		"""
-		if randomly_choose_segment == True:
+		if segment == None:
 			segment_to_mutate = choice(self.GetSegments())
-
-		if randomly_choose_segment == False:
-			if segment == None:
-				raise Error("If you are not opting to randomly mutate a virus, then " + \
-					"you must specify the segment to be mutated.")
-			else:
-				segment_to_mutate = self.GetSegments()[segment]
-		segment_to_mutate.Mutate(num_positions)
-		self.SetMutatedStatus(True)
-
+		else:
+			segment_to_mutate = self.GetSegments()[segment]
+		
+		segment_to_mutate.Mutate()
+		
 	def Replicate(self, id, date):
 		"""
 		NOTE: THIS FUNCTION LOOKS WELL-CODED ENOUGH. DO NOT MODIFY UNNECESSARILY.
@@ -69,7 +63,7 @@ class Virus(object):
 		"""
 		new_virus = deepcopy(self)
 		new_virus.SetCreationDate(date)
-		new_virus.SetID(id)
+		new_virus.SetID('Virus%s' % id)
 		new_virus.SetParent(self.GetID())
 		new_virus.SetReassortedStatus(False)
 		
@@ -89,7 +83,8 @@ class Virus(object):
 
 		return new_virus
 
-	def GenerateSegment(self, segment_number, sequence=None, length=10):
+	def GenerateSegment(self, segment_number, mutation_rate=0.03, \
+		sequence=None, length=10):
 		"""
 		This method creates a segment with the parameters passed in.
 
@@ -107,8 +102,8 @@ class Virus(object):
 			have 200 n.t. mutated 1 n.t. off a fixed seed in addition to 100 
 			n.t. with 20 n.t. mutated off a fixed seed.
 		"""
-		segment = Segment(segment_number=segment_number, sequence=sequence,\
-			length=length)
+		segment = Segment(segment_number=segment_number, mutation_rate=mutation_rate, \
+			sequence=sequence, length=length)
 
 		if sequence == None:
 			segment.GenerateAndSetSequence()
@@ -125,8 +120,8 @@ class Virus(object):
 		the process of creating segments.
 		"""
 		if num_segments != len(segment_lengths):
-			print 'ERROR: The number of segment lengths specified does not\
-					match the number of segments in the virus.'
+			raise ValueError('The number of segment lengths specified does not ' + \
+				'match the number of segments in the virus.')
 			pass
 		segments = []
 		for i, length in enumerate(segment_lengths):
@@ -185,10 +180,6 @@ class Virus(object):
 		"""This method sets the ID of the virus."""
 		self.id = id
 
-	def SetMutatedStatus(self, status):
-		"""This is a helper method that will set the mutated status."""
-		self.mutated = status
-
 	def SetParent(self, parent_id):
 		"""
 		This method records the ID of the virus' parent prior to 
@@ -207,10 +198,6 @@ class Virus(object):
 	def SetReassortedStatus(self, status):
 		"""This is a helper method that will set the reassortant status."""
 		self.reassorted = status
-
-	def IsMutated(self):
-		"""This method returns the mutated status of the virus."""
-		return self.mutated
 
 	def IsReassorted(self):
 		"""This method returns the reassortant status of the virus."""

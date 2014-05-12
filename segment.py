@@ -1,5 +1,6 @@
 from random import choice, random, randint
 from sequence import Sequence
+from numpy.random import binomial
 
 class Segment(object):
 	"""
@@ -9,7 +10,7 @@ class Segment(object):
 	1. Mutating the segment.
 	2. Generating a sequence for the segment (if needed).
 	"""
-	def __init__(self, segment_number, sequence=None, length=10):
+	def __init__(self, segment_number, mutation_rate, sequence=None, length=10):
 		"""Initialize a segment with no sequence."""
 		super(Segment, self).__init__()
 		
@@ -23,6 +24,11 @@ class Segment(object):
 
 		# This is syntactic sugar, can be taken away if not needed.
 		self.length = self.sequence.length
+
+		# Each segment has a mutation rate associated with it.
+		# This is to simulate the different mutation rates associated
+		# with each segment e.g. HA mutates faster than NP.
+		self.mutation_rate = mutation_rate
 
 	def __repr__(self):
 		return '%s %s' % (self.number, self.sequence)
@@ -59,11 +65,15 @@ class Segment(object):
 		"""This method gets a segment's number."""
 		return self.number
 
-	def Mutate(self, num_positions):
+	def Mutate(self):
 		"""
-		This method is syntactic sugar for mutating the segment's sequence.
-		See: Sequence.Mutate()
+		This method uses the length of the segment and the segment's mutation rate to
+		identify the number of positions that will be mutated. 
 		"""
+		n = self.length
+		p = self.mutation_rate
+
+		num_positions = binomial(n,p)
 
 		self.GetSequence().Mutate(num_positions=num_positions)
 
