@@ -67,7 +67,7 @@ class Host(object):
 		away, though the particle's descendents or ancestors may still
 		remain inside the host.
 		"""
-		from virus import Virus:
+		from virus import Virus
 		if isinstance(virus, Virus):
 			self.viruses.pop(self.viruses.index(virus))
 		else:

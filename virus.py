@@ -75,19 +75,12 @@ class Virus(object):
 
 	def Mutate(self, segment=None):
 		"""
-		This method will mutate a specified segment.
-
-		If the segment is specified, then that segment will be mutated.
-
-		If the segment is not specified, then a randomly chosen segment 
-		will be mutated.
+		This method will mutate all of the viral segments according to their 
+		specified substitution rates.
 		"""
-		if segment == None:
-			segment_to_mutate = choice(self.GetSegments())
-		else:
-			segment_to_mutate = self.GetSegments()[segment]
-		
-		segment_to_mutate.Mutate()
+
+		for segment in self.GetSegments():
+			segment.Mutate()
 		
 	def Replicate(self, id, date):
 		"""
@@ -95,7 +88,10 @@ class Virus(object):
 
 		This method returns a deep copy of the virus chosen to replicate.
 
-		At the end, return the new virus.
+		At the end, return the new virus. 
+
+		Mutate is guaranteed to be called, but not guaranteed to happen. Whether 
+		a mutation occurs or not depends on the mutation rate of the virus.
 		"""
 		new_virus = deepcopy(self)
 		new_virus.host = self.host
@@ -104,18 +100,7 @@ class Virus(object):
 		new_virus.SetParent(self.GetID())
 		new_virus.SetReassortedStatus(False)
 		self.host.AddVirus(new_virus)
-		print new_virus.host
-
-		return new_virus
-
-	def ReplicateAndMutate(self, id, date, segment=None):
-		"""
-		This method will take a specified virus and replicate it using the 
-		Replicate() function, and then mutate a specified segment according to
-		the segment's mutation rate.
-		"""
-		new_virus = self.Replicate(id, date)
-		new_virus.Mutate(segment=segment)
+		new_virus.Mutate()
 
 		return new_virus
 
