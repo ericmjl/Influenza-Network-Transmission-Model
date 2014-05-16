@@ -7,10 +7,19 @@ from numpy.random import normal, binomial
 
 
 class Environment(object):
-	"""docstring for Environment
+	"""
+	The Environment class controls the space for virus-host interactions to 
+	occur.
 
-	The Environment contains a bunch of viruses, and in the Environment, one 
-	can choose to manipulate the viruses at will.
+	The Environment has (attributes):
+	- A timer, keeping track of the current time step.
+	- A list of hosts inside the environment. 
+
+	The Environment can (functions):
+	- Advance a time step.
+	- Generate viruses to seed into hosts.
+	- Generate list of hosts.
+	- Make one host infect the next host.
 	"""
 
 	def __init__(self, num_viruses=1, virus_type='default'):

@@ -10,17 +10,29 @@ class Host(object):
 	of the many viral particles present inside the host. That virus is then
 	sequenced, and used for reconstruction.
 	"""
-	def __init__(self, id):
+	def __init__(self, id, infected_by=None):
 		super(Host, self).__init__()
 		self.id = id
+
+		self.infected_by = None
 
 		self.viruses = []
 
 	def __repr__(self):
 		return "Host %s infected with %s viruses." % (self.id, \
 			len(self.viruses))
-		
-	def GetInfectionStatus(self):
+	
+	def SetInfectedBy(self, other_host):
+		"""
+		This method will set the "infected_by" variable to the source of the 
+		virus for the host.
+		"""
+		if type(other_host) != Host:
+			raise TypeError('A Host object must be specified!')
+		else:
+			self.infected_by = other_host
+
+	def IsInfected(self):
 		"""
 		This method checks the length of the viruses list to see if the host
 		was infected with virus or not.
@@ -31,8 +43,8 @@ class Host(object):
 			return True
 
 	def AddVirus(self, virus):
-		# The following line has to be placed inside here, in order to
-		# make the code work.
+		# The following line has to be placed inside here, in order to make 
+		# the code work.
 		from virus import Virus
 		"""
 		This method adds a virus to the list of viruses present in the host.
