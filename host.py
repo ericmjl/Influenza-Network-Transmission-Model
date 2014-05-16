@@ -10,11 +10,13 @@ class Host(object):
 	of the many viral particles present inside the host. That virus is then
 	sequenced, and used for reconstruction.
 	"""
-	def __init__(self, id, infected_by=None):
+	def __init__(self, id, infected_by=None, infected_on=None):
 		super(Host, self).__init__()
 		self.id = id
 
-		self.infected_by = None
+		self.infected_by = self.SetInfectedBy(infected_by)
+
+		self.infected_on = self.SetInfectedOn(infected_on)
 
 		self.viruses = []
 
@@ -31,6 +33,18 @@ class Host(object):
 			raise TypeError('A Host object must be specified!')
 		else:
 			self.infected_by = other_host
+
+	def SetInfectedOn(self, date):
+		"""
+		This method will set the "infected_on" variable with the date of 
+		infection of the host.
+
+		For now, restrict "date" to be an integer.
+		"""
+		if type(date) != int:
+			raise TypeError('An integer must be specified!')
+		else:
+			self.infected_on = date
 
 	def IsInfected(self):
 		"""

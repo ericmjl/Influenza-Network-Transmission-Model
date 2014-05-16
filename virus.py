@@ -22,16 +22,16 @@ class Virus(object):
 		# variable that records the id of the Virus in the Environment.
 		self.id = self.SetID(id)
 		print self.GetID()
-		# variable that records the id of the parent Virus in the Environment.
-		self.parent = parent 
+		# variable that references to the parent Virus object.
+		self.parent = self.SetParent(None) 
 
 		# Boolean variable that records whether this virus was reassorted from 
 		# two parents or not.
-		self.reassorted = False 
+		self.reassorted = self.SetReassortedStatus(False) 
 
 		# An integer number describing the time step in which a virus was 
 		# generated.
-		self.creation_date = creation_date
+		self.creation_date = self.SetCreationDate(creation_date)
 
 		# List of segments present in the virus. This is changed 
 		# in SmallFluVirus.
@@ -64,6 +64,7 @@ class Virus(object):
 
 	def TransmitFromHostToHost(self, host1, host2):
 		"""
+		DEPRECATE: Move this to Host object.
 		This method will make the virus jump from one host to the next.
 		"""
 		if type(host1) != Host or type(host2) != Host:
@@ -201,12 +202,14 @@ class Virus(object):
 		"""This method sets the ID of the virus."""
 		self.id = 'Virus %s' % id
 
-	def SetParent(self, parent_id):
-		"""
-		This method records the ID of the virus' parent prior to 
-		replication.
-		"""
-		self.parent = parent_id
+	def SetParent(self, parent_virus):
+		"""This method records the ID of the virus' parent."""
+		if parent_virus == None:
+			self.parent = None
+		elif not isinstance(parent_virus, Virus):
+			raise TypeError('A Virus object must be specified!')
+		else:
+			self.parent = parent_virus
 
 	def SetSegments(self, list_of_segments):
 		"""
@@ -218,7 +221,10 @@ class Virus(object):
 
 	def SetReassortedStatus(self, status):
 		"""This is a helper method that will set the reassortant status."""
-		self.reassorted = status
+		if status not in [True, False]:
+			raise TypeError('A Boolean status must be specified!')
+		else:
+			self.reassorted = status
 
 	def IsReassorted(self):
 		"""This method returns the reassortant status of the virus."""
