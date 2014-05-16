@@ -80,6 +80,9 @@ class SmallFluVirus(Virus):
 		- Specify whether to mutate anywhere.
 		- Specify whether to mutate in constant region
 		- Specify whether to mutate in variable region
+
+		NOTE: KEEP THIS FUNCTION UNTIL THE MUTATION RATES HAVE BEEN PROPERLY
+		COMPUTED.
 		"""
 
 		if mutate_anywhere == True:
