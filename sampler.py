@@ -23,14 +23,6 @@ class Sampler(object):
 		if n == 'all':
 			self.sampled_viruses = environment.GetViruses()
 
-		# elif not isinstance(n, int) or n < 0:
-		# 	print "ERROR: Please change n to an integer number greater than \
-		# 			zero."
-
-		# elif not isinstance(environment, Environment):
-		# 	print "ERROR: You have not specified an environment to sample \
-		# 			viruses from."
-
 		else:
 			viruses = environment.GetViruses()
 

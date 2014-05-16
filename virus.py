@@ -1,6 +1,7 @@
 from random import random, randint, choice
 from segment import Segment
 from copy import deepcopy
+from host import Host
 
 class Virus(object):
 	"""
@@ -35,8 +36,32 @@ class Virus(object):
 		# in SmallFluVirus.
 		self.segments = self.GenerateSegments(num_segments)
 
+		# This is the current host of the virus particle. Each virus particle
+		# can only have one host.
+		self.host = None
+
 	def __repr__(self):
 		return str([self.GetID(), self.GetParent()])
+
+	def InfectHost(self, host):
+		"""
+		This method will make the virus infect a specified host.
+		"""
+		if type(host) != Host:
+			raise TypeError('A Host must be specified!')
+		else:
+			self.host = host
+			host.AddVirus(self)
+
+	def TransmitFromHostToHost(self, host1, host2):
+		"""
+		This method will make the virus jump from one host to the next.
+		"""
+		if type(host1) != Host or type(host2) != Host:
+			raise TypeError('Two Hosts must be specified!')
+		else:
+			self.host = host2
+			host1.RemoveVirus(self)
 
 	def Mutate(self, segment=None):
 		"""
