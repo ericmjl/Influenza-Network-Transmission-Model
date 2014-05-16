@@ -17,7 +17,8 @@ class Host(object):
 		self.viruses = []
 
 	def __repr__(self):
-		return "Host %s" % id
+		return "Host %s infected with %s viruses." % (self.id, \
+			len(self.viruses))
 		
 	def GetInfectionStatus(self):
 		"""
@@ -30,6 +31,9 @@ class Host(object):
 			return True
 
 	def AddVirus(self, virus):
+		# The following line has to be placed inside here, in order to
+		# make the code work.
+		from virus import Virus
 		"""
 		This method adds a virus to the list of viruses present in the host.
 		"""
@@ -37,6 +41,7 @@ class Host(object):
 			self.viruses.append(virus)
 		else:
 			raise TypeError('A virus must be specified!')
+
 	def GetViruses(self):
 		"""
 		This method gets the list of viruses present in the host.
@@ -51,3 +56,4 @@ class Host(object):
 		remain inside the host.
 		"""
 		self.viruses.pop(self.viruses.index(virus))
+

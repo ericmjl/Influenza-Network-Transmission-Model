@@ -11,7 +11,7 @@ class Virus(object):
 	length 10 nucleotides.
 
 	"""
-	def __init__(self, id, creation_date, num_segments=2, parent=None, \
+	def __init__(self, id, creation_date, host, num_segments=2, parent=None, \
 		generate_sequence=True):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
@@ -20,7 +20,8 @@ class Virus(object):
 
 		super(Virus, self).__init__()
 		# variable that records the id of the Virus in the Environment.
-		self.id = id 
+		self.id = self.SetID(id)
+		print self.GetID()
 		# variable that records the id of the parent Virus in the Environment.
 		self.parent = parent 
 
@@ -38,19 +39,27 @@ class Virus(object):
 
 		# This is the current host of the virus particle. Each virus particle
 		# can only have one host.
-		self.host = None
+		if type(host) != Host:
+			raise TypeError('A Host object must be specified!')
+		else:
+			self.host = host
+			host.AddVirus(self)
 
 	def __repr__(self):
-		return str([self.GetID(), self.GetParent()])
+		return str(self.GetID())
 
 	def InfectHost(self, host):
 		"""
 		This method will make the virus infect a specified host.
 		"""
 		if type(host) != Host:
-			raise TypeError('A Host must be specified!')
+			raise TypeError('A Host object must be specified!')
 		else:
+			# Remove virus from the current host.
+			self.host.RemoveVirus(self)
+			# Set new host for the virus.
 			self.host = host
+			# Add self to the host.
 			host.AddVirus(self)
 
 	def TransmitFromHostToHost(self, host1, host2):
@@ -58,10 +67,11 @@ class Virus(object):
 		This method will make the virus jump from one host to the next.
 		"""
 		if type(host1) != Host or type(host2) != Host:
-			raise TypeError('Two Hosts must be specified!')
+			raise TypeError('Two Host objects must be specified!')
 		else:
-			self.host = host2
+			host2.AddVirus(self)
 			host1.RemoveVirus(self)
+			self.host = host2
 
 	def Mutate(self, segment=None):
 		"""
@@ -88,24 +98,24 @@ class Virus(object):
 		At the end, return the new virus.
 		"""
 		new_virus = deepcopy(self)
+		new_virus.host = self.host
 		new_virus.SetCreationDate(date)
-		new_virus.SetID('Virus%s' % id)
+		new_virus.SetID(id)
 		new_virus.SetParent(self.GetID())
 		new_virus.SetReassortedStatus(False)
-		
+		self.host.AddVirus(new_virus)
+		print new_virus.host
+
 		return new_virus
 
-	def ReplicateAndMutate(self, id, date, num_positions_to_mutate, \
-		randomly_choose_segment=True, segment=None):
+	def ReplicateAndMutate(self, id, date, segment=None):
 		"""
 		This method will take a specified virus and replicate it using the 
-		Replicate() function, and then mutate a specified segment with a 
-		specified number of mutations. 
+		Replicate() function, and then mutate a specified segment according to
+		the segment's mutation rate.
 		"""
 		new_virus = self.Replicate(id, date)
-		new_virus.Mutate(num_positions_to_mutate, \
-			randomly_choose_segment=randomly_choose_segment,\
-			segment=segment)
+		new_virus.Mutate(segment=segment)
 
 		return new_virus
 
@@ -204,7 +214,7 @@ class Virus(object):
 
 	def SetID(self, id):
 		"""This method sets the ID of the virus."""
-		self.id = id
+		self.id = 'Virus %s' % id
 
 	def SetParent(self, parent_id):
 		"""
