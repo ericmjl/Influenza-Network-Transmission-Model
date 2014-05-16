@@ -52,7 +52,7 @@ class Host(object):
 		if isinstance(virus, Virus):
 			self.viruses.append(virus)
 		else:
-			raise TypeError('A virus must be specified!')
+			raise TypeError('A Virus object must be specified!')
 
 	def GetViruses(self):
 		"""
@@ -67,5 +67,9 @@ class Host(object):
 		away, though the particle's descendents or ancestors may still
 		remain inside the host.
 		"""
-		self.viruses.pop(self.viruses.index(virus))
+		from virus import Virus:
+		if isinstance(virus, Virus):
+			self.viruses.pop(self.viruses.index(virus))
+		else:
+			raise TypeError('A Virus object must be specified!')
 
