@@ -13,7 +13,6 @@ class Environment(object):
 	can choose to manipulate the viruses at will.
 	"""
 
-
 	def __init__(self, num_viruses=1, virus_type='default'):
 		"""Initialize the environment with only 1 default virus."""
 		super(Environment, self).__init__()
@@ -22,9 +21,9 @@ class Environment(object):
 		self.viruses = []
 		for i in range(num_viruses):
 			if virus_type == 'default':
-				virus = Virus(id='Virus%s' % i, creation_date=0)
+				virus = Virus(id=i, creation_date=0)
 			if virus_type == 'influenza':
-				virus = SmallFluVirus(id='Virus%s' % i, creation_date=0)
+				virus = SmallFluVirus(id=i, creation_date=0)
 			self.viruses.append(virus)
 
 		# This variable keeps track of the number of viruses present
