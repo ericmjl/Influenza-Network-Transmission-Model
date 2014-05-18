@@ -200,7 +200,10 @@ class Virus(object):
 
 	def SetID(self, id):
 		"""This method sets the ID of the virus."""
-		self.id = 'Virus %s' % id
+		if type(id) != int:
+			raise TypeError('An integer must be specified!')
+		else:
+			self.id = 'Virus %s' % id
 
 	def SetParent(self, parent_virus):
 		"""This method records the ID of the virus' parent."""
