@@ -85,8 +85,6 @@ class Virus(object):
 		
 	def Replicate(self, id, date):
 		"""
-		NOTE: THIS FUNCTION LOOKS WELL-CODED ENOUGH. DO NOT MODIFY UNNECESSARILY.
-
 		This method returns a deep copy of the virus chosen to replicate.
 
 		At the end, return the new virus. 

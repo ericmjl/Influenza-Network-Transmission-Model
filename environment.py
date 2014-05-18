@@ -41,9 +41,11 @@ class Environment(object):
 		# The number of times that the environment simulation will run.
 		self.timesteps = 100
 
-		# The current timestep of the environment.
-		self.current_timestep = 0
-
+"""To be coded up"""
+	# def RunSimulation(self):
+	# 	for i in self.timesteps():
+			
+			
 	def GetViruses(self):
 		"""This method returns the list of viruses in the environment."""
 		return self.viruses
