@@ -8,18 +8,18 @@ from numpy.random import normal, binomial
 
 class Environment(object):
 	"""
-	The Environment class controls the space for virus-host interactions to 
-	occur.
+	The Environment class is the highest level object in the viral simulator. 
+	Metaphorically, the Environment class can represent a geographic location
+	where Host objects interact with each other, and in the process, pass 
+	viruses from one host to the next.
 
-	The Environment has (attributes):
-	- A timer, keeping track of the current time step.
-	- A list of hosts inside the environment. 
+	In the Environment class, Sampler objects can also interact with Host
+	objects, to simulate the process of sampling pathogens from the Host.
 
-	The Environment can (functions):
-	- Advance a time step.
-	- Generate viruses to seed into hosts.
-	- Generate list of hosts.
-	- Make one host infect the next host.
+	Multiple Environment objects can exist in a particular simulation, allowing
+	a host to move from Environment to Environment. This allows one to simulate 
+	the spread of Viruses from one Environment to another, by means of Hosts 
+	moving between them.
 	"""
 
 	def __init__(self):
@@ -47,32 +47,47 @@ class Environment(object):
 			
 			
 	def GetViruses(self):
-		"""This method returns the list of viruses in the environment."""
+		"""
+		This method returns the list of viruses in the environment.
+
+		NOTE: TO BE DEPRECATED
+		"""
 		return self.viruses
 
 	def GetVirus(self, id):
-		"""This method returns a specified virus from the environment."""
+		"""
+		This method returns a specified virus from the environment.
+
+		NOTE: TO BE DEPRECATED
+		"""
 		virus = [v for v in self.GetViruses() if v.id == id]
 		return virus[0]
 
 	def GetRandomVirus(self):
 		"""
-		This function returns a random virus from the population of viruses
+		This function returns a random virus from the population of viruses.
+
+		NOTE: TO BE DPRECATED
 		"""
 		return sample(self.viruses, 1)[0]
 
 	def GetLastVirus(self):
 		"""
 		This function returns the last virus to be generated.
+
+		NOTE: TO BE DEPRECATED
 		"""
 		return self.viruses[-1]
 
 	def ReplicateVirus(self, virus=None, date=None):
 		"""
-		This method replicates a specified virus. The number of progeny that come out 
-		follows a normal distribution, rounded off to the nearest integer.
+		This method replicates a specified virus. The number of progeny that 
+		come out follows a normal distribution, rounded off to the nearest 
+		integer.
 
 		num_of_progeny ~ N(1.2, 0.5)
+
+		NOTE: TO BE DEPRECATED
 		"""
 
 		# Check to make sure that the virus is a valid virus object.
@@ -103,7 +118,8 @@ class Environment(object):
 		"""
 		This method takes a specified virus and mutates it.
 
-		If the virus is not a Virus or SmallFluVirus, an error message will be raised.
+		If the virus is not a Virus or SmallFluVirus, an error message will be 
+		raised.
 
 		If no virus is specified, then the last virus will be mutated.
 

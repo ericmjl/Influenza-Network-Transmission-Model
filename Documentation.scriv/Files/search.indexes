@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<SearchIndexes Version="1.0">
+    <Documents>
+        <Document ID="7">
+            <Title>Segment</Title>
+        </Document>
+        <Document ID="3">
+            <Title>Environment</Title>
+            <Text>The Environment class is the highest level object in the viral simulator.  Metaphorically, the Environment class can represent a geographic location where hosts interact with each other.
+
+Attributes:
+</Text>
+        </Document>
+        <Document ID="8">
+            <Title>Sequence</Title>
+            <Text>The Sequence class is the lowest-level class in the simulator. 
+
+Attributes:
+Sequence: </Text>
+        </Document>
+        <Document ID="4">
+            <Title>Host</Title>
+            <Text>The Host is the unit of consideration when sampling. </Text>
+        </Document>
+        <Document ID="9">
+            <Title>Sampler</Title>
+        </Document>
+        <Document ID="5">
+            <Title>Classes</Title>
+        </Document>
+        <Document ID="6">
+            <Title>Virus</Title>
+        </Document>
+    </Documents>
+</SearchIndexes>

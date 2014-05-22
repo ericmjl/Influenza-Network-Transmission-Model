@@ -4,12 +4,39 @@ from numpy.random import binomial
 
 class Segment(object):
 	"""
-	Segment class defines what a viral segment is.
+	The Segment class is one level below the Virus class, as it houses the 
+	genomic sequence of the Virus. This class has the following attributes and
+	methods:
 
-	This class specifies the methods for a segment, namely:
-	1. Mutating the segment.
-	2. Generating a sequence for the segment (if needed).
+	----------
+
+	ATTRIBUTES 
+
+	- SEQUENCE OBJECT: sequence
+		the seed sequence of the virus.
+
+	- DICTIONARY: mutations
+		a dictionary of the mutations that have been made to the virus.
+
+	- FLOAT: mutation_rate
+		a floating point number that describes the mutation rate of the virus.
+		The units of this number are: substitutions per site per generation time. 
+		This can be calculated by dividing the known substitution rate (in 
+		substitutions per site per year) by the generation time (in years).
+
+	----------
+
+	MAIN METHODS 
+
+	- Mutate: 
+		a method that mutates the segment according to its mutation rate.
+		This method is called upon by the Virus object each time it 
+		replicates.
+
+	The other methods written in this class are helper methods or syntactic 
+	sugar for reducing the number of lines of code, to help with readability.
 	"""
+
 	def __init__(self, segment_number, mutation_rate, sequence=None, length=10):
 		"""Initialize a segment with no sequence."""
 		super(Segment, self).__init__()
@@ -85,8 +112,11 @@ class Segment(object):
 
 	def Mutate(self):
 		"""
-		This method uses the length of the segment and the segment's mutation rate to
-		identify the number of positions that will be mutated. 
+		This method uses the length of the segment and the segment's mutation rate 
+		to identify the number of positions that will be mutated. 
+
+		TODO: REWRITE SUCH THAT THIS UPDATES A DICTIONARY OF MUTATIONS INSTEAD OF
+		MUTATING AN ACTUAL SEQUENCE.
 		"""
 		n = self.length
 		p = self.mutation_rate

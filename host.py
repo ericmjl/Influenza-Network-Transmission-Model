@@ -6,16 +6,31 @@ import hashlib
 
 class Host(object):
 	"""
-	The Host exists within the environment.
+	The Host object is the second highest level object in the simulator. The
+	Metaphorically, the Host object is the host for a pathogen. At each 
+	discrete viral generation time, the Host can allow Virus(es) to generate  
+	progeny inside of itself. Additionally, at each time step, the host can
+	remove a proportion of viruses from itself. The dynamics of viral removal 
+	can be configured by subclassing the Host object. The dynamics of viral 
+	progeny generation can be configured by subclassing the Virus object.
 
-	The host exists to allow viruses to replicate within it.
+	Host objects have to exist within an environment. This is compulsory to 
+	be able to track where a virus was sampled. 
 
-	One host can have many viruses, replicating and mutating within it.
+	For the purposes of knowing the ground truth of infection, Host objects
+	are capable of keeping track of who they were infected by and when. 
+	Currently, this is kept track of as two individual variables. In the future,
+	in order to generalize this to multiple infections, this will be kept
+	track of as a single dictionary, where the keys are the time of infection,
+	and the values are the Host objects that were the source of infection.
+	TODO: CHANGE INFECTED_BY AND INFECTED_ON TO INFECTION_HISTORY.
 
-	When a Sampler samples something, it will sample the host and grab one 
-	of the many viral particles present inside the host. That virus is then
-	sequenced, and used for reconstruction.
+	Sampler objects can interact with Host objects. Sampler objects can either 
+	sample everything from the host, or it can sample a subset of viruses. The 
+	number of viruses that are sampled at each sampling event can be configured 
+	by subclassing the Sampler class.
 	"""
+	
 	def __init__(self, environment, infected_by=None, infected_on=None):
 		super(Host, self).__init__()
 		# Set the Host ID
