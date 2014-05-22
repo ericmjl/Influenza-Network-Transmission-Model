@@ -8,8 +8,6 @@ class Sequence(object):
 
 	This can be subclassed to store seed sequences for other viruses, rather 
 	than using a generated sequence. 
-
-	Test.
 	"""
 	def __init__(self, length=10, sequence=None):
 		"""
