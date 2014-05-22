@@ -48,31 +48,31 @@ class Segment(object):
 		# segment number does not belong to the Sequence object, but
 		# to the Segment object.
 		self.number = None
-		self.SetSegmentNumber(segment_number)
+		self.set_segment_number(segment_number)
 
 		# A dictionary that keeps track of the positions that have been mutated
 		self.mutations = dict()
 
 		# This is syntactic sugar, can be taken away if not needed.
-		self.length = len(self.GetSequence())
+		self.length = len(self.get_sequence())
 
 		# Each segment has a mutation rate associated with it.
 		# This is to simulate the different mutation rates associated
 		# with each segment e.g. HA mutates faster than NP.
 		self.mutation_rate = None
-		self.SetMutationRate(mutation_rate)
+		self.set_mutation_rate(rate)
 
 	def __repr__(self):
 		return 'Segment %s' % self.number
 
-	def SetMutationRate(self, mutation_rate):
+	def set_mutation_rate(self, rate):
 		"""This method initializes the mutation rate of the segment."""
-		if type(mutation_rate) != float:
+		if type(rate) != float:
 			raise TypeError('A floating point number must be specified!')
 		else:
-			self.mutation_rate = mutation_rate
+			self.mutation_rate = rate
 
-	def SetSegmentNumber(self, segment_number):
+	def set_segment_number(self, segment_number):
 		"""
 		This method initializes the segment number of the segment.
 		"""
@@ -81,29 +81,29 @@ class Segment(object):
 		else:
 			self.segment_number = segment_number
 
-	def SetSequence(self, sequence):
-		"""
-		Setter method for a segment's sequence.
+	# def SetSequence(self, sequence):
+	# 	"""
+	# 	Setter method for a segment's sequence.
 
-		NOTE: TO BE DEPRECATED. NOT NEEDED.
-		"""
-		self.sequence.SetSequence(sequence)
+	# 	NOTE: TO BE DEPRECATED. NOT NEEDED.
+	# 	"""
+	# 	self.sequence.SetSequence(sequence)
 
-	def GenerateAndSetSequence(self):
-		"""
-		This method is syntactic sugar for generating and setting the sequence
-		of a virus.
-		"""
-		sequence = self.sequence.GenerateSequence(self.length)
-		self.sequence.SetSequence(sequence)
+	# def GenerateAndSetSequence(self):
+	# 	"""
+	# 	This method is syntactic sugar for generating and setting the sequence
+	# 	of a virus.
+	# 	"""
+	# 	sequence = self.sequence.GenerateSequence(self.length)
+	# 	self.sequence.SetSequence(sequence)
 
-	def Append(self, sequence):
-		"""
-		This method is syntactic sugar for appending a sequence to the virus.
-		"""
-		self.sequence.Append(sequence)
+	# def append(self, sequence):
+	# 	"""
+	# 	This method is syntactic sugar for appending a sequence to the virus.
+	# 	"""
+	# 	self.sequence.Append(sequence)
 
-	def GetSequence(self):
+	def get_sequence(self):
 		"""
 		This method computes the segment's sequence by comparing the seed 
 		sequence with the mutation dictionary.
@@ -118,46 +118,53 @@ class Segment(object):
 
 		return sequence
 
-	def GetNumber(self):
+	def get_number(self):
 		"""This method gets a segment's number."""
 		return self.number
 
-	def Mutate(self):
+	def mutate(self):
 		"""
 		This method uses the length of the segment and the segment's mutation 
-		rate to identify the number of positions that will be mutated. 
-
-		TODO: REWRITE SUCH THAT THIS UPDATES A DICTIONARY OF MUTATIONS INSTEAD 
-		OF MUTATING AN ACTUAL SEQUENCE.
+		rate to identify the number of positions that will be mutated. It then
+		chooses that many positions at random, and records the mutation in the
+		segment's mutation dictionary.
 		"""
 		n = self.length
 		p = self.mutation_rate
 
 		num_positions = binomial(n,p)
 
-		def ChoosePositions(start, end, num_positions):
+		def choose_positions(start, end, num_positions):
 			"""
 			This function chooses n positions at random within
 			range(start, end)
 			"""
 			return sample(range(start, end), num_positions)
 
-		positions = ChoosePositions(0, len(self.GetSequence()), num_positions)
+		positions = choose_positions(0, len(self.get_sequence()), num_positions)
 
-		def ChooseNewLetter():
+		def choose_new_letter(letter):
 			"""
-			This function randomly chooses one letter from ATGC. The letter
-			that is chosen may not necessarily be different from the original
-			letter at that position in the sequence.
+			This function chooses a new letter from ATGC that is
+			different from the letter passed into the function.
 			"""
-			return choice(['A', 'T', 'G', 'C'])
+			possible_letters = set(['A', 'T', 'G', 'C'])
+			new_letter = choice(list(
+				possible_letters.difference(set(letter))))
+
+			return new_letter
 
 		for position in positions:
-			self.mutations[position] = ChooseNewLetter()
+			if position in self.mutations.keys():
+				letter = self.mutations[position]
+			else:
+				letter = self.sequence.get_string()[position]
 
-		# self.GetSequence().Mutate(num_positions=num_positions)
+			self.mutations[position] = choose_new_letter(letter)
 
 
 
 
-		
+
+
+

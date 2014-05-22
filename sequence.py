@@ -27,7 +27,7 @@ class Sequence(object):
 	def __repr__(self):
 		return self.sequence
 		
-	def GenerateSequence(self, length):
+	def generate_sequence(self, length):
 		"""
 		This method will generate a sequence, and set the Sequence object's 
 		sequence to that sequence.
@@ -57,13 +57,13 @@ class Sequence(object):
 	# 	"""
 	# 	self.sequence += sequence
 
-	# def GetString(self):
-	# 	"""
-	# 	This method returns a string representation of the sequence. This is
-	# 	syntactic sugar for the __repr__ method, to help make code in other
-	# 	places look cleaner.
-	# 	"""
-	# 	return str(self.sequence)
+	def get_string(self):
+		"""
+		This method returns a string representation of the sequence. This is
+		syntactic sugar for the __repr__ method, to help make code in other
+		places look cleaner.
+		"""
+		return str(self.sequence)
 
 	# def Mutate(self, start=None, end=None, num_positions=None):
 	# 	"""
