@@ -42,24 +42,15 @@ class Segment(object):
 		"""Initialize a segment with no sequence."""
 		super(Segment, self).__init__()
 		
-		# The sequence of the Segment object is a Sequence object.
 		self.seed_sequence = Sequence(sequence=None, length=10)
 		
-		# Each segment has a segment number associated with it. The
-		# segment number does not belong to the Sequence object, but
-		# to the Segment object.
 		self.segment_number = None
 		self.set_segment_number(segment_number=segment_number)
 
-		# A dictionary that keeps track of the positions that have been mutated
 		self.mutations = dict()
 
-		# This is syntactic sugar, can be taken away if not needed.
 		self.length = len(self.compute_sequence())
 
-		# Each segment has a mutation rate associated with it.
-		# This is to simulate the different mutation rates associated
-		# with each segment e.g. HA mutates faster than NP.
 		self.mutation_rate = None
 		self.set_mutation_rate(mutation_rate)
 
@@ -89,7 +80,7 @@ class Segment(object):
 		"""
 		sequence = ''
 
-		for i, letter in enumerate(self.seed_sequence.get_string()):
+		for i, letter in enumerate(self.seed_sequence.__repr__()):
 			if i in self.mutations.keys():
 				sequence += self.mutations[i]
 			else:
@@ -140,7 +131,7 @@ class Segment(object):
 			if position in self.mutations.keys():
 				letter = self.mutations[position]
 			else:
-				letter = self.seed_sequence.get_string()[position]
+				letter = self.seed_sequence.sequence[position]
 
 			self.mutations[position] = choose_new_letter(letter)
 

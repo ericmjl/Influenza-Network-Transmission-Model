@@ -27,8 +27,7 @@ class Sampler(object):
 			viruses = environment.GetViruses()
 
 			if n > len(viruses):
-				print "ERROR: The number of viruses that you want to sample" + \
-				" is greater than the number of viruses present."
+				print "ERROR: The number of viruses that you want to sample is greater than the number of viruses present."
 
 			else:
 				self.sampled_viruses = sample(viruses, n)
@@ -39,8 +38,8 @@ class Sampler(object):
 
 	def GetRandomVirus(self):
 		"""
-		This method returns a randomly selected virus from the pool of viruses that
-		have been sampled from the environment.
+		This method returns a randomly selected virus from the pool of viruses 
+		that have been sampled from the environment.
 		"""
 
 		return self.sampled_viruses[randint(0, len(self.sampled_viruses) - 1)]

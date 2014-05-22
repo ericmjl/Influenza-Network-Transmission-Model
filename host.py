@@ -31,27 +31,22 @@ class Host(object):
 	by subclassing the Sampler class.
 	"""
 	
-	def __init__(self, environment, infected_by=None, infected_on=None):
+	def __init__(self, environment):
 		super(Host, self).__init__()
-		# Set the Host ID
+
 		self.id = None
 		self.set_id()
 
-		# Set the current environment of the host.
 		self.environment = None
 		self.set_environment(environment)
 
-		# Infection history
 		self.infection_history = dict()
 
-		# A list of viruses present in the host.
 		self.viruses = []
-
 
 	def __repr__(self):
 		return "Host %s infected with %s viruses." % (self.id, \
 			len(self.viruses))
-
 
 	def generate_viral_progeny(self, date):
 		"""
@@ -99,34 +94,44 @@ class Host(object):
 		
 		self.id = unique_id.hexdigest()
 
-	def set_infection_history(self, time, other_host):
-		self.infection_history[time] = other_host
+	def infect(other_host):
+		"""
+		This method will sample a random number of viruses to give to another 
+		host. It will also update the infection history of the other host.
+		"""
+		infection_time = self.environment.get_current_time()
+		other_host.set_infection_history(time, self)
+
+
+
+	def set_infection_history(self, time, source_host):
+		self.infection_history[time] = source_host
 	
-	def set_infected_by(self, other_host):
-		"""
-		This method will set the "infected_by" variable to the source of the 
-		virus for the host.
-		"""
-		if other_host == None:
-			self.infected_by = None
-		elif type(other_host) != Host:
-			raise TypeError('A Host object must be specified!')
-		else:
-			self.infected_by = other_host
+	# def set_infected_by(self, other_host):
+	# 	"""
+	# 	This method will set the "infected_by" variable to the source of the 
+	# 	virus for the host.
+	# 	"""
+	# 	if other_host == None:
+	# 		self.infected_by = None
+	# 	elif type(other_host) != Host:
+	# 		raise TypeError('A Host object must be specified!')
+	# 	else:
+	# 		self.infected_by = other_host
 
-	def SetInfectedOn(self, date):
-		"""
-		This method will set the "infected_on" variable with the date of 
-		infection of the host.
+	# def set_infected_on(self, date):
+	# 	"""
+	# 	This method will set the "infected_on" variable with the date of 
+	# 	infection of the host.
 
-		For now, restrict "date" to be an integer.
-		"""
-		if date == None:
-			self.infected_on = None
-		elif type(date) != int:
-			raise TypeError('An integer must be specified!')
-		else:
-			self.infected_on = date
+	# 	For now, restrict "date" to be an integer.
+	# 	"""
+	# 	if date == None:
+	# 		self.infected_on = None
+	# 	elif type(date) != int:
+	# 		raise TypeError('An integer must be specified!')
+	# 	else:
+	# 		self.infected_on = date
 
 	def is_infected(self):
 		"""

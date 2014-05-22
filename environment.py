@@ -25,6 +25,8 @@ class Environment(object):
 	def __init__(self):
 		"""Initialize the environment with only 1 default virus."""
 		super(Environment, self).__init__()
+
+		self.current_time = 0
 		
 		# # This list keeps track of the number of viruses present
 		# self.viruses = []
@@ -39,7 +41,14 @@ class Environment(object):
 		# self.num_hosts = len(self.viruses)
 
 		# The number of times that the environment simulation will run.
-		self.timesteps = 100
+		# self.timesteps = 100
+
+	def increment_one_timestep(self):
+		"""
+		This that happen at each time step are recorded here. Add below the 
+		current line.
+		"""
+		self.current_time += 1
 
 	"""To be coded up"""
 	# def RunSimulation(self):

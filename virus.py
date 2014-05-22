@@ -36,7 +36,7 @@ class Virus(object):
 		a two-tuple that specifies the minimum and maximum number of viruses 
 		that come out of one replication cycle.
 
-	- FLOAT: generation_time
+	- FLOAT: replication_time
 	 	an integer that specifies how long it takes (in minutes) for one 
 	 	replication cycle to take place.
 
@@ -63,92 +63,55 @@ class Virus(object):
 	
 	def __init__(self, creation_date, host, num_segments=2, parent=None, \
 		generate_sequence=True, burst_size_range=(5, 50), \
-		generation_time=30):
+		replication_time=30, bottleneck_size=4):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
 		super(Virus, self).__init__()
 
-		# variable that records the id of the Virus in the Environment.
 		self.id = None
 		self.set_id()
 
-		# variable that references to the parent Virus object.
 		self.parent = None
 		self.set_parent(parent)
 
-		# # Boolean variable that records whether this virus was reassorted from 
-		# # two parents or not.
-		# # TODO: TO BE DEPRECATED, AS THIS CAN BE INFERRED FROM THE PARENTS
-		# # VARIABLE
-		# self.reassorted = None
-		# self.set_reassorted_status(False) 
-
-		# An integer number describing the time step in which a virus was 
-		# generated.
 		self.creation_date = None
 		self.set_creation_date(creation_date)
 
-		# List of segments present in the virus. This is changed 
-		# in SmallFluVirus.
-		self.segments = []
-		self.generate_segments(num_segments)
+		self.segments = self.generate_segments(num_segments=num_segments)
 
-		# This is the current host of the virus particle. Each virus particle
-		# can only have one host.
 		if type(host) != Host:
 			raise TypeError('A Host object must be specified!')
 		else:
 			self.host = host
 			host.add_virus(self)
 
-		# Burst size is a two-tuple that describes the minimum and maximum 
-		# burst size of the virus per generation/replication cycle. 
 		self.burst_size_range = None
 		self.set_burst_size_range(burst_size_range)
 
-		# Generation time is an integer number that specifies, in minutes, the 
-		# time from one generation to the next.
-		self.generation_time = None
-		self.set_generation_time(generation_time)
+		self.replication_time = None
+		self.set_replication_time(replication_time)
 
 
 	def __repr__(self):
 		return str(self.id)
 
-	# def infect_host(self, host):
-	# 	"""
-	# 	This method will make the virus infect a specified host.
-	# 	"""
-	# 	if type(host) != Host:
-	# 		raise TypeError('A Host object must be specified!')
-	# 	else:
-	# 		# Remove virus from the current host.
-	# 		self.host.RemoveVirus(self)
-	# 		# Set new host for the virus.
-	# 		self.host = host
-	# 		# Add self to the host.
-	# 		host.add_virus(self)
+	def get_sequence(self):
+		sequences = []
+		for segment in self.segments:
+			sequence = segment.compute_sequence()
+			# print sequence
+			sequences.append(segment.compute_sequence())
 
-	# def transmit_from_host_to_host(self, host1, host2):
-	# 	"""
-	# 	DEPRECATE: Move this to Host object.
-	# 	This method will make the virus jump from one host to the next.
-	# 	"""
-	# 	if type(host1) != Host or type(host2) != Host:
-	# 		raise TypeError('Two Host objects must be specified!')
-	# 	else:
-	# 		host2.add_virus(self)
-	# 		host1.RemoveVirus(self)
-	# 		self.host = host2
+		return sequences
 
-	def mutate(self, segment=None):
+	def mutate(self):
 		"""
 		This method will mutate all of the viral segments according to their 
 		specified substitution rates.
 		"""
 
-		for segment in self.get_segments():
+		for segment in self.segments:
 			segment.mutate()
 
 	def generate_progeny(self, date):
@@ -181,7 +144,6 @@ class Virus(object):
 		new_virus.set_creation_date(date)
 		new_virus.set_id()
 		new_virus.set_parent(self)
-		new_virus.set_reassorted_status(False)
 		self.host.add_virus(new_virus)
 		new_virus.mutate()
 
@@ -199,63 +161,36 @@ class Virus(object):
 
 		return segment
 
-	def generate_segments(self, num_segments=2, segment_lengths=(10, 10)):
+	def generate_segments(self, num_segments):
 		"""
-		This method generates a list of segments with the tuple of segment 
-		lengths passed in as a parameter. This method basically automates
-		the process of creating segments.
+		This method generates the specified number of segments.
 		"""
-		if num_segments != len(segment_lengths):
-			raise ValueError('The number of segment lengths specified does not match the number of segments in the virus.')
-			pass
 		segments = []
-		for i, length in enumerate(segment_lengths):
-			segments.append(self.generate_segment(i, sequence=None, \
-				length=length))
+
+		for i in range(num_segments):
+			segments.append(self.generate_segment(segment_number=i))
 
 		return segments
-
-	# def get_creation_date(self):
-	# 	"""
-	# 	This method returns the creation date of the virus.
-	# 	"""
-	# 	return self.creation_date
 
 	def compute_genome_length(self):
 		"""
 		This method returns the length of the virus genome, summed over all    
 		segments in the viral genome.
 		"""
-		length = sum(segment.length for segment in self.get_segments())
+		length = sum(segment.length for segment in self.segments)
 		return length
 
-	# def get_id(self):
-	# 	"""This method returns the ID of the virus."""
-	# 	return self.id
+	# def get_sequences(self):
+	# 	"""
+	# 	This method will return a list of sequences, one for each 
+	# 	segment.
+	# 	"""
+	# 	sequences = []
 
-	# def get_parent(self):
-	# 	"""This method returns the ID of the virus' parent."""
-	# 	return self.parent
+	# 	for segment in self.segments:
+	# 		sequences.append(segment.get_sequence())
 
-	# def get_segments(self):
-	# 	"""This method will return a list of segments."""
-	# 	return self.segments
-
-	# def get_segment(self, segment_number):
-	# 	"""This method will return the particular segment specified."""
-	# 	return self.segments[segment_number]
-
-	def get_sequences(self):
-		"""
-		This method will return a list of sequences, one for each 
-		segment.
-		"""
-		sequences = []
-
-		for segment in self.segments:
-			sequences.append(segment.get_sequence())
-
-		return sequences
+	# 	return sequences
 
 	def set_burst_size_range(self, burst_size_range):
 		"""
@@ -281,11 +216,11 @@ class Virus(object):
 		"""This method sets the creation date of the virus."""
 		self.creation_date = date
 
-	def set_generation_time(self, generation_time):
-		if type(generation_time) != int:
+	def set_replication_time(self, replication_time):
+		if type(replication_time) != int:
 			raise TypeError('An integer number of minutes must be specified!')
 		else:
-			self.generation_time = generation_time
+			self.replication_time = replication_time
 
 	def set_id(self):
 		"""
