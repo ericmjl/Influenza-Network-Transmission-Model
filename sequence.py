@@ -2,8 +2,14 @@ from random import choice, random, randint, sample
 
 class Sequence(object):
 	"""
-	The Sequence object is a container for a string along with some
-	methods to act on it.
+	The Sequence object is the lowest level object in the viral simulator. 
+	It provides a container for storing seed sequences for the viruses present
+	in the environment. 
+
+	This can be subclassed to store seed sequences for other viruses, rather 
+	than using a generated sequence. 
+
+	Test.
 	"""
 	def __init__(self, length=10, sequence=None):
 		"""
@@ -18,7 +24,7 @@ class Sequence(object):
 		else:
 			self.sequence = sequence
 
-		self.length = len(self.sequence)
+		# self.length = len(self.sequence)
 
 	def __repr__(self):
 		return self.sequence
@@ -34,83 +40,86 @@ class Sequence(object):
 			sequence += letter
 		return sequence
 
-	def SetSequence(self, sequence):
-		"""Setter method for a segment's sequence."""
-		self.sequence = sequence
+	# def SetSequence(self, sequence):
+	# 	"""Setter method for a segment's sequence."""
+	# 	self.sequence = sequence
 
-	def GenerateAndSetSequence(self, length):
-		"""
-		Syntactic sugar for generating and setting the sequence
-		of a virus.
-		"""
-		sequence = self.GenerateSequence(length)
-		self.SetSequence(sequence)
+	# def GenerateAndSetSequence(self, length):
+	# 	"""
+	# 	Syntactic sugar for generating and setting the sequence
+	# 	of a virus.
+	# 	"""
+	# 	sequence = self.GenerateSequence(length)
+	# 	self.SetSequence(sequence)
 
-	def Append(self, sequence):
-		"""
-		Appends a sequence to the 3' end of the segment's sequence.
-		The 3' end is the right hand side of the sequence.
-		"""
-		self.sequence += sequence
+	# def Append(self, sequence):
+	# 	"""
+	# 	Appends a sequence to the 3' end of the segment's sequence.
+	# 	The 3' end is the right hand side of the sequence.
+	# 	"""
+	# 	self.sequence += sequence
 
-	def GetString(self):
-		"""
-		This method returns a string representation of the sequence. This is
-		syntactic sugar for the __repr__ method, to help make code in other
-		places look cleaner.
-		"""
-		return str(self.sequence)
+	# def GetString(self):
+	# 	"""
+	# 	This method returns a string representation of the sequence. This is
+	# 	syntactic sugar for the __repr__ method, to help make code in other
+	# 	places look cleaner.
+	# 	"""
+	# 	return str(self.sequence)
 
-	def Mutate(self, start=None, end=None, num_positions=None):
-		"""
-		This method will randomly pick a letter in the segment's sequence,
-		and proceed to mutate that letter.
+	# def Mutate(self, start=None, end=None, num_positions=None):
+	# 	"""
+	# 	This method will randomly pick a letter in the segment's sequence,
+	# 	and proceed to mutate that letter.
 
-		If you wish to mutate a specific region, then specify the "start" and
-		"end" positions.
+	# 	If you wish to mutate a specific region, then specify the "start" and
+	# 	"end" positions.
 
-		If you wish to mutate more than 1 position in the specified region, 
-		then specify the num_positions that you wish to mutate.
+	# 	If you wish to mutate more than 1 position in the specified region, 
+	# 	then specify the num_positions that you wish to mutate.
 
-		NOTE: THIS FUNCTION IS WELL-INSULATED. DO NOT CHANGE OR MODIFY.
-		"""
+	# 	NOTE: THIS FUNCTION IS WELL-INSULATED. DO NOT CHANGE OR MODIFY.
 
-		def ChooseNewLetter(letter):
-			"""
-			This function chooses a new letter from ATGC that is
-			different from the letter passed into the function.
-			"""
-			possible_letters = set(['A', 'T', 'G', 'C'])
-			new_letter = choice(list(
-				possible_letters.difference(set(letter))))
+	# 	UPDATE: THIS FUNCTION WILL BE DEPRECATED, AS THE WAY THAT MUTAITONS 
+	# 	ARE BEING MADE IS THROUGH A DICTIONARY.
+	# 	"""
 
-			return new_letter
+	# 	def ChooseNewLetter(letter):
+	# 		"""
+	# 		This function chooses a new letter from ATGC that is
+	# 		different from the letter passed into the function.
+	# 		"""
+	# 		possible_letters = set(['A', 'T', 'G', 'C'])
+	# 		new_letter = choice(list(
+	# 			possible_letters.difference(set(letter))))
 
-		def ChoosePositions(start, end, num_positions):
-			"""
-			This function chooses n positions at random within
-			range(start, end)
-			"""
-			return sample(range(start, end), num_positions)
+	# 		return new_letter
 
-		# If it is not specified where to start or end, or if one is specified
-		# and the other isn't, then set the start to 0, and end to the length
-		# of the sequence.
-		if start == None or end == None:
-			start = 0
-			end = len(self.sequence)
+	# 	def ChoosePositions(start, end, num_positions):
+	# 		"""
+	# 		This function chooses n positions at random within
+	# 		range(start, end)
+	# 		"""
+	# 		return sample(range(start, end), num_positions)
 
-		if num_positions == None:
-			raise ValueError("Specify the number of positions to mutate.")
+	# 	# If it is not specified where to start or end, or if one is specified
+	# 	# and the other isn't, then set the start to 0, and end to the length
+	# 	# of the sequence.
+	# 	if start == None or end == None:
+	# 		start = 0
+	# 		end = len(self.sequence)
 
-		positions = ChoosePositions(start, end, num_positions)
+	# 	if num_positions == None:
+	# 		raise ValueError("Specify the number of positions to mutate.")
 
-		new_sequence = ''
+	# 	positions = ChoosePositions(start, end, num_positions)
 
-		for i, letter in enumerate(self.sequence):
-			if i in positions:
-				new_sequence += ChooseNewLetter(letter)
-			else:
-				new_sequence += letter
+	# 	new_sequence = ''
 
-		self.SetSequence(new_sequence)
+	# 	for i, letter in enumerate(self.sequence):
+	# 		if i in positions:
+	# 			new_sequence += ChooseNewLetter(letter)
+	# 		else:
+	# 			new_sequence += letter
+
+	# 	self.SetSequence(new_sequence)

@@ -13,7 +13,7 @@ class Segment(object):
 	ATTRIBUTES 
 
 	- SEQUENCE OBJECT: sequence
-		the seed sequence of the virus.
+		the seed sequence of the segment. 
 
 	- DICTIONARY: mutations
 		a dictionary of the mutations that have been made to the virus.
@@ -50,8 +50,11 @@ class Segment(object):
 		self.number = None
 		self.SetSegmentNumber(segment_number)
 
+		# A dictionary that keeps track of the positions that have been mutated
+		self.mutations = dict()
+
 		# This is syntactic sugar, can be taken away if not needed.
-		self.length = self.sequence.length
+		self.length = len(self.GetSequence())
 
 		# Each segment has a mutation rate associated with it.
 		# This is to simulate the different mutation rates associated
@@ -60,7 +63,7 @@ class Segment(object):
 		self.SetMutationRate(mutation_rate)
 
 	def __repr__(self):
-		return '%s %s' % (self.number, self.sequence)
+		return 'Segment %s' % self.number
 
 	def SetMutationRate(self, mutation_rate):
 		"""This method initializes the mutation rate of the segment."""
@@ -77,15 +80,13 @@ class Segment(object):
 			raise TypeError('An integer must be specified!')
 		else:
 			self.segment_number = segment_number
-	
-	def GenerateSequence(self):
-		"""
-		This is syntactic sugar to generate a sequence of specified length.
-		"""
-		self.sequence.GenerateSequence(self.length)
 
 	def SetSequence(self, sequence):
-		"""Setter method for a segment's sequence."""
+		"""
+		Setter method for a segment's sequence.
+
+		NOTE: TO BE DEPRECATED. NOT NEEDED.
+		"""
 		self.sequence.SetSequence(sequence)
 
 	def GenerateAndSetSequence(self):
@@ -103,8 +104,19 @@ class Segment(object):
 		self.sequence.Append(sequence)
 
 	def GetSequence(self):
-		"""This method gets a segment's sequence as a string."""
-		return self.sequence
+		"""
+		This method computes the segment's sequence by comparing the seed 
+		sequence with the mutation dictionary.
+		"""
+		sequence = ''
+
+		for i, letter in enumerate(self.sequence):
+			if i in self.mutations.keys():
+				sequence.append(self.mutations[i])
+			else:
+				sequence.append(letter)
+
+		return sequence
 
 	def GetNumber(self):
 		"""This method gets a segment's number."""
@@ -112,18 +124,38 @@ class Segment(object):
 
 	def Mutate(self):
 		"""
-		This method uses the length of the segment and the segment's mutation rate 
-		to identify the number of positions that will be mutated. 
+		This method uses the length of the segment and the segment's mutation 
+		rate to identify the number of positions that will be mutated. 
 
-		TODO: REWRITE SUCH THAT THIS UPDATES A DICTIONARY OF MUTATIONS INSTEAD OF
-		MUTATING AN ACTUAL SEQUENCE.
+		TODO: REWRITE SUCH THAT THIS UPDATES A DICTIONARY OF MUTATIONS INSTEAD 
+		OF MUTATING AN ACTUAL SEQUENCE.
 		"""
 		n = self.length
 		p = self.mutation_rate
 
 		num_positions = binomial(n,p)
 
-		self.GetSequence().Mutate(num_positions=num_positions)
+		def ChoosePositions(start, end, num_positions):
+			"""
+			This function chooses n positions at random within
+			range(start, end)
+			"""
+			return sample(range(start, end), num_positions)
+
+		positions = ChoosePositions(0, len(self.GetSequence()), num_positions)
+
+		def ChooseNewLetter():
+			"""
+			This function randomly chooses one letter from ATGC. The letter
+			that is chosen may not necessarily be different from the original
+			letter at that position in the sequence.
+			"""
+			return choice(['A', 'T', 'G', 'C'])
+
+		for position in positions:
+			self.mutations[position] = ChooseNewLetter()
+
+		# self.GetSequence().Mutate(num_positions=num_positions)
 
 
 
