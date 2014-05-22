@@ -1,4 +1,4 @@
-from random import choice, random, randint
+from random import choice, random, randint, sample
 from sequence import Sequence
 from numpy.random import binomial
 
@@ -37,33 +37,33 @@ class Segment(object):
 	sugar for reducing the number of lines of code, to help with readability.
 	"""
 
-	def __init__(self, segment_number, mutation_rate, sequence=None, length=10):
+	def __init__(self, segment_number, mutation_rate, sequence=None):
 		"""Initialize a segment with no sequence."""
 		super(Segment, self).__init__()
 		
 		# The sequence of the Segment object is a Sequence object.
-		self.seed_sequence = Sequence(length=length, sequence=None)
+		self.seed_sequence = Sequence(sequence=None)
 		
 		# Each segment has a segment number associated with it. The
 		# segment number does not belong to the Sequence object, but
 		# to the Segment object.
-		self.number = None
-		self.set_segment_number(number=segment_number)
+		self.segment_number = None
+		self.set_segment_number(segment_number=segment_number)
 
 		# A dictionary that keeps track of the positions that have been mutated
 		self.mutations = dict()
 
 		# This is syntactic sugar, can be taken away if not needed.
-		self.length = len(self.get_sequence())
+		self.length = len(self.compute_sequence())
 
 		# Each segment has a mutation rate associated with it.
 		# This is to simulate the different mutation rates associated
 		# with each segment e.g. HA mutates faster than NP.
 		self.mutation_rate = None
-		self.set_mutation_rate(rate)
+		self.set_mutation_rate(mutation_rate)
 
 	def __repr__(self):
-		return 'Segment %s' % self.number
+		return 'Segment %s' % self.segment_number
 
 	def set_mutation_rate(self, rate):
 		"""This method initializes the mutation rate of the segment."""
@@ -72,33 +72,35 @@ class Segment(object):
 		else:
 			self.mutation_rate = rate
 
-	def set_segment_number(self, number):
+	def set_segment_number(self, segment_number):
 		"""
 		This method initializes the segment number of the segment.
 		"""
-		if type(number) != int:
+		if type(segment_number) != int:
 			raise TypeError('An integer must be specified!')
 		else:
-			self.segment_number = number
+			self.segment_number = segment_number
 
-	def get_sequence(self):
+	def compute_sequence(self):
 		"""
 		This method computes the segment's sequence by comparing the seed 
 		sequence with the mutation dictionary.
 		"""
 		sequence = ''
 
-		for i, letter in enumerate(self.seed_sequence):
+		for i, letter in enumerate(self.seed_sequence.get_string()):
 			if i in self.mutations.keys():
-				sequence.append(self.mutations[i])
+				sequence += self.mutations[i]
 			else:
-				sequence.append(letter)
+				sequence += letter
 
 		return sequence
 
-	def get_number(self):
-		"""This method gets a segment's number."""
-		return self.number
+	def get_segment_number(self):
+		return self.segment_number
+
+	def get_mutations(self):
+		return self.mutations
 
 	def mutate(self):
 		"""
@@ -119,7 +121,7 @@ class Segment(object):
 			"""
 			return sample(range(start, end), num_positions)
 
-		positions = choose_positions(0, len(self.get_sequence()), \
+		positions = choose_positions(0, len(self.compute_sequence()), \
 			num_positions)
 
 		def choose_new_letter(letter):
