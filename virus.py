@@ -61,9 +61,8 @@ class Virus(object):
 	attributes (with type checking for setters).
 	"""
 	
-	def __init__(self, creation_date, host, num_segments=2, parent=None, \
-		generate_sequence=True, burst_size_range=(5, 50), \
-		replication_time=30, bottleneck_size=4):
+	def __init__(self, creation_date, host, num_segments=2, \
+		burst_size_range=(5, 50), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
@@ -73,7 +72,6 @@ class Virus(object):
 		self.set_id()
 
 		self.parent = None
-		self.set_parent(parent)
 
 		self.creation_date = None
 		self.set_creation_date(creation_date)

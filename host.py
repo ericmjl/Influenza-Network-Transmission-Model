@@ -1,6 +1,7 @@
 from random import random, randint, choice, sample
 from datetime import datetime
 from joblib import Parallel, delayed
+from numpy.random import normal
 
 import hashlib
 
@@ -94,7 +95,7 @@ class Host(object):
 		
 		self.id = unique_id.hexdigest()
 
-	def infect(other_host):
+	def infect(other_host, bottleneck_mean=4, bottleneck_variance=2):
 		"""
 		This method will sample a random number of viruses to give to another 
 		host. It will also update the infection history of the other host.
@@ -102,6 +103,13 @@ class Host(object):
 		infection_time = self.environment.get_current_time()
 		other_host.set_infection_history(time, self)
 
+		num_viruses = len(self.viruses) + 1
+		while num_viruses > len(self.viruses):
+			num_viruses = normal(bottleneck_size, bottleneck_variance)
+
+		viruses_to_transmit = sample(self.viruses, num_viruses)
+
+		other_host.add_viruses(viruses_to_transmit)
 
 
 	def set_infection_history(self, time, source_host):
