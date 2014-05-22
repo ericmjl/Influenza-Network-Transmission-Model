@@ -94,11 +94,16 @@ class Virus(object):
 	def __repr__(self):
 		return str(self.id)
 
+	def get_mutations(self):
+		mutations = []
+		for segment in self.segments:
+			mutations.append(segment.get_mutations())
+		return mutations
+
 	def get_sequence(self):
 		sequences = []
 		for segment in self.segments:
 			sequence = segment.compute_sequence()
-			# print sequence
 			sequences.append(segment.compute_sequence())
 
 		return sequences
@@ -112,40 +117,36 @@ class Virus(object):
 		for segment in self.segments:
 			segment.mutate()
 
-	def generate_progeny(self, date):
+	def generate_progeny(self):
 		"""
-		This method returns a list of progeny virus that have replicated from 
-		the current virus.
+		This method replicates the virus according to the burst size, which is 
+		specified by choosing an integer at random from the burst size range.
 		"""
 		burst_size = randint(self.burst_size_range[0], \
 			self.burst_size_range[1])
-		# print burst_size
-		progeny_viruses = []
-
-		for i in range(burst_size):
-			new_virus = self.replicate(date)
-			progeny_viruses.append(new_virus)
-
-		return progeny_viruses
 		
-	def replicate(self, date):
+		for i in range(burst_size):
+			new_virus = self.replicate()
+		
+	def replicate(self):
 		"""
 		This method returns a deep copy of the virus chosen to replicate.
 
-		At the end, return the new virus. 
+		mutate is guaranteed to be called, but not guaranteed to happen. 
+		Whether a mutation occurs or not depends on the mutation rate of the 
+		virus.
+		
+		At the end, add the virus to the host. Return the virus just in case someone wants to 
 
-		mutate is guaranteed to be called, but not guaranteed to happen. Whether 
-		a mutation occurs or not depends on the mutation rate of the virus.
 		"""
 		new_virus = deepcopy(self)
 		new_virus.host = self.host
-		new_virus.set_creation_date(date)
+		new_virus.creation_date = self.host.environment.get_current_time()
+		new_virus.parent = self
 		new_virus.set_id()
-		new_virus.set_parent(self)
-		self.host.add_virus(new_virus)
 		new_virus.mutate()
 
-		return new_virus
+		self.host.add_virus(new_virus)
 
 	def generate_segment(self, segment_number, mutation_rate=0.03, \
 		sequence=None, length=100):

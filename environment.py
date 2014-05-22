@@ -50,6 +50,9 @@ class Environment(object):
 		"""
 		self.current_time += 1
 
+	def get_current_time(self):
+		return self.current_time
+
 	"""To be coded up"""
 	# def RunSimulation(self):
 	# 	for i in self.timesteps():
