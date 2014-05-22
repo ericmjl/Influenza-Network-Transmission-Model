@@ -35,19 +35,14 @@ class Host(object):
 		super(Host, self).__init__()
 		# Set the Host ID
 		self.id = None
-		self.SetID()
+		self.set_id()
 
 		# Set the current environment of the host.
 		self.environment = None
-		self.SetEnvironment(environment)
+		self.set_environment(environment)
 
-		# Set who infected the host.
-		self.infected_by = None
-		self.SetInfectedBy(infected_by)
-
-		# Set when the host was infected.
-		self.infected_on = None
-		self.SetInfectedOn(infected_on)
+		# Infection history
+		self.infection_history = dict()
 
 		# A list of viruses present in the host.
 		self.viruses = []
@@ -58,23 +53,23 @@ class Host(object):
 			len(self.viruses))
 
 
-	def GenerateViralProgeny(self, date):
+	def generate_viral_progeny(self, date):
 		"""
 		This method is the "host" acting on the "viruses" present inside it.
 		What it does is the following:
 		- Randomly sample a number of progeny to replicate.
-		- Generates the progeny by calling on the virus GenerateProgeny() 
+		- Generates the progeny by calling on the virus generate_viral_progeny() 
 		  function
 		- Append the viral progeny to the host's list of viruses
 		"""
 		
-		rand_number = randint(0, len(self.GetViruses()))
-		viruses_to_replicate = sample(self.GetViruses(), rand_number)
+		rand_number = randint(0, len(self.get_viruses()))
+		viruses_to_replicate = sample(self.get_viruses(), rand_number)
 
 		for virus in viruses_to_replicate:
-			self.AddViruses(virus.GenerateProgeny(date))
+			self.add_viruses(virus.generate_viral_progeny(date))
 
-	def SetEnvironment(self, environment):
+	def set_environment(self, environment):
 		"""
 		This method sets the environment that the host is currently in.
 		This method exists because we want the host to be capable of 
@@ -88,7 +83,7 @@ class Host(object):
 		else:
 			raise TypeError('An environment object must be specified!')
 
-	def SetID(self):
+	def set_id(self):
 		"""
 		This method sets the ID of the virus to be a unique string based on
 		the string representation of the current time and a randomly chosen
@@ -103,8 +98,11 @@ class Host(object):
 		unique_id.update(unique_string)
 		
 		self.id = unique_id.hexdigest()
+
+	def set_infection_history(self, time, other_host):
+
 	
-	def SetInfectedBy(self, other_host):
+	def set_infected_by(self, other_host):
 		"""
 		This method will set the "infected_by" variable to the source of the 
 		virus for the host.
@@ -130,7 +128,7 @@ class Host(object):
 		else:
 			self.infected_on = date
 
-	def IsInfected(self):
+	def is_infected(self):
 		"""
 		This method checks the length of the viruses list to see if the host
 		was infected with virus or not.
@@ -140,7 +138,7 @@ class Host(object):
 		else:
 			return True
 
-	def AddVirus(self, virus):
+	def add_virus(self, virus):
 		# The following line has to be placed inside here, in order to make 
 		# the code work.
 		from virus import Virus
@@ -152,20 +150,20 @@ class Host(object):
 		else:
 			raise TypeError('A Virus object must be specified!')
 
-	def AddViruses(self, viruses):
+	def add_viruses(self, viruses):
 		"""
 		This method takes in a list of viruses and appends it to the 
 		current list of viruses.
 		"""
 		self.viruses.extend(viruses)
 
-	def GetViruses(self):
+	def get_viruses(self):
 		"""
 		This method gets the list of viruses present in the host.
 		"""
 		return self.viruses
 
-	def RemoveVirus(self, virus):
+	def remove_virus(self, virus):
 		"""
 		This method exists for the purpose of removing a virus from a host
 		during a transmission event. The particular viral particle goes
