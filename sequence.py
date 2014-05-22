@@ -18,13 +18,13 @@ class Sequence(object):
 		"""
 		super(Sequence, self).__init__()
 
+		self.sequence = None
+
 		if sequence == None:
 			self.sequence = self.generate_sequence(length)
 		else:
 			self.sequence = None
 			self.set_sequence(sequence)
-
-		# self.length = len(self.sequence)
 
 	def __repr__(self):
 		return self.sequence
@@ -48,10 +48,3 @@ class Sequence(object):
 		else:
 			raise TypeError('A string must be specified!')
 
-	def get_string(self):
-		"""
-		This method returns a string representation of the sequence. This is
-		syntactic sugar for the __repr__ method, to help make code in other
-		places look cleaner.
-		"""
-		return str(self.sequence)

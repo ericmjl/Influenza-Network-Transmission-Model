@@ -100,7 +100,7 @@ class Host(object):
 		self.id = unique_id.hexdigest()
 
 	def set_infection_history(self, time, other_host):
-
+		self.infection_history[time] = other_host
 	
 	def set_infected_by(self, other_host):
 		"""
