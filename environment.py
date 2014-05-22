@@ -46,7 +46,7 @@ class Environment(object):
 	# 	for i in self.timesteps():
 			
 			
-	def GetViruses(self):
+	def get_viruses(self):
 		"""
 		This method returns the list of viruses in the environment.
 
@@ -54,16 +54,16 @@ class Environment(object):
 		"""
 		return self.viruses
 
-	def GetVirus(self, id):
+	def get_virus(self, id):
 		"""
 		This method returns a specified virus from the environment.
 
 		NOTE: TO BE DEPRECATED
 		"""
-		virus = [v for v in self.GetViruses() if v.id == id]
+		virus = [v for v in self.get_viruses() if v.id == id]
 		return virus[0]
 
-	def GetRandomVirus(self):
+	def get_random_virus(self):
 		"""
 		This function returns a random virus from the population of viruses.
 
@@ -71,7 +71,7 @@ class Environment(object):
 		"""
 		return sample(self.viruses, 1)[0]
 
-	def GetLastVirus(self):
+	def get_last_virus(self):
 		"""
 		This function returns the last virus to be generated.
 
@@ -79,7 +79,7 @@ class Environment(object):
 		"""
 		return self.viruses[-1]
 
-	def ReplicateVirus(self, virus=None, date=None):
+	def replicate_virus(self, virus=None, date=None):
 		"""
 		This method replicates a specified virus. The number of progeny that 
 		come out follows a normal distribution, rounded off to the nearest 
@@ -101,20 +101,20 @@ class Environment(object):
 			pass
 
 		else:
-			num_of_progeny = self.SampleNumberOfDescendants(1.2, 0.5)
+			num_of_progeny = self.sample_number_of_descendents(1.2, 0.5)
 
 			counter = 0
 			while counter < num_of_progeny:
 				# Generate new virus with new ID.
-				new_id = len(self.GetViruses())
-				new_virus = virus.Replicate(id=new_id, date=date)
-				new_virus.Mutate()
+				new_id = len(self.get_viruses())
+				new_virus = virus.replicate(id=new_id, date=date)
+				new_virus.mutate()
 
 				# Append the virus to the virus list.
 				self.viruses.append(new_virus)
 				counter += 1
 
-	def MutateVirus(self, virus=None):
+	def mutate_virus(self, virus=None):
 		"""
 		This method takes a specified virus and mutates it.
 
@@ -128,9 +128,9 @@ class Environment(object):
 
 		# Check to make sure that the virus has the correct type.
 		if virus == None:
-			virus = self.GetLastVirus()
+			virus = self.get_last_virus()
 
-		virus.Mutate()
+		virus.mutate()
 		
 	def RandomlyReassortTwoViruses(self, date, mutate=False):
 		"""
@@ -144,16 +144,16 @@ class Environment(object):
 		"""
 		# Randomly pick two viruses
 		virus1, virus2 = sample(self.viruses, 2)
-		if len(virus1.GetSegments()) != len(virus2.GetSegments()):
+		if len(virus1.get_segments()) != len(virus2.get_segments()):
 			raise TypeError("ERROR: Virus %s and Virus %s do not have the same number \
-				of segments!" % (virus1.GetID(), virus2.GetID())) 
+				of segments!" % (virus1.get_id(), virus2.get_id())) 
 
 		else:
 			# Create the dictionary that will hold the pool of viruses
 			segments_pool = dict()
 
 			# Identify how many segments there are
-			num_segments = len(virus1.GetSegments())
+			num_segments = len(virus1.get_segments())
 
 			# Initialize each segment in the pool to be a list
 			for i in range(num_segments):
@@ -161,10 +161,10 @@ class Environment(object):
 
 			# Append each segment in each virus to the appropriate segment 
 			# pool
-			for i, segment in enumerate(virus1.GetSegments()):
+			for i, segment in enumerate(virus1.get_segments()):
 				segments_pool[i].append(segment)
 
-			for i, segment in enumerate(virus2.GetSegments()):
+			for i, segment in enumerate(virus2.get_segments()):
 				segments_pool[i].append(segment)
 
 			# Check that the two parental viruses are of identical type. If they are,
@@ -189,25 +189,25 @@ class Environment(object):
 				luckysegment = choice(v)
 				new_segments.append(luckysegment)
 				if v.index(luckysegment) == 0:
-					new_parents.add(virus1.GetID())
+					new_parents.add(virus1.get_id())
 				else:
-					new_parents.add(virus2.GetID())
+					new_parents.add(virus2.get_id())
 
 			# Batch set the new virus' segments to the list of segments. See
 			# Virus class documentation on the use of this method.
-			new_virus.SetSegments(new_segments)
-			new_virus.SetReassortedStatus(True)			
+			new_virus.set_segments(new_segments)
+			new_virus.set_reassorted_status(True)			
 			if len(new_parents) == 1:
-				new_virus.SetParent(tuple(new_parents)[0])
-				new_virus.SetReassortedStatus(False)
+				new_virus.set_parent(tuple(new_parents)[0])
+				new_virus.set_reassorted_status(False)
 			else:
-				new_virus.SetParent(tuple(new_parents))
-				new_virus.SetReassortedStatus(True)
+				new_virus.set_parent(tuple(new_parents))
+				new_virus.set_reassorted_status(True)
 
 			# Add the virus to the list of viruses.
 			self.viruses.append(new_virus)
 
-	def SampleNumberOfDescendants(self, mean, stdev):
+	def sample_number_of_descendents(self, mean, stdev):
 		"""
 		This method returns a rounded number of descendents drawn from a 
 		normal distribution. Mean and standard deviation have to be specified.
@@ -217,7 +217,7 @@ class Environment(object):
 		"""
 		return int(round(normal(mean, stdev)))
 
-	def SampleNumberOfMutations(self, mutation_rate, virus):
+	def sample_number_of_mutations(self, mutation_rate, virus):
 		"""
 		This method returns a rounded number of mutations to make, drawn from a 
 		binomial distribution. Number of positions to choose from is the length 
