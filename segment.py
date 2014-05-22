@@ -42,13 +42,13 @@ class Segment(object):
 		super(Segment, self).__init__()
 		
 		# The sequence of the Segment object is a Sequence object.
-		self.sequence = Sequence(length)
+		self.seed_sequence = Sequence(length=length, sequence=None)
 		
 		# Each segment has a segment number associated with it. The
 		# segment number does not belong to the Sequence object, but
 		# to the Segment object.
 		self.number = None
-		self.set_segment_number(segment_number)
+		self.set_segment_number(number=segment_number)
 
 		# A dictionary that keeps track of the positions that have been mutated
 		self.mutations = dict()
@@ -72,36 +72,14 @@ class Segment(object):
 		else:
 			self.mutation_rate = rate
 
-	def set_segment_number(self, segment_number):
+	def set_segment_number(self, number):
 		"""
 		This method initializes the segment number of the segment.
 		"""
-		if type(segment_number) != int:
+		if type(number) != int:
 			raise TypeError('An integer must be specified!')
 		else:
-			self.segment_number = segment_number
-
-	# def SetSequence(self, sequence):
-	# 	"""
-	# 	Setter method for a segment's sequence.
-
-	# 	NOTE: TO BE DEPRECATED. NOT NEEDED.
-	# 	"""
-	# 	self.sequence.SetSequence(sequence)
-
-	# def GenerateAndSetSequence(self):
-	# 	"""
-	# 	This method is syntactic sugar for generating and setting the sequence
-	# 	of a virus.
-	# 	"""
-	# 	sequence = self.sequence.GenerateSequence(self.length)
-	# 	self.sequence.SetSequence(sequence)
-
-	# def append(self, sequence):
-	# 	"""
-	# 	This method is syntactic sugar for appending a sequence to the virus.
-	# 	"""
-	# 	self.sequence.Append(sequence)
+			self.segment_number = number
 
 	def get_sequence(self):
 		"""
@@ -110,7 +88,7 @@ class Segment(object):
 		"""
 		sequence = ''
 
-		for i, letter in enumerate(self.sequence):
+		for i, letter in enumerate(self.seed_sequence):
 			if i in self.mutations.keys():
 				sequence.append(self.mutations[i])
 			else:
@@ -141,7 +119,8 @@ class Segment(object):
 			"""
 			return sample(range(start, end), num_positions)
 
-		positions = choose_positions(0, len(self.get_sequence()), num_positions)
+		positions = choose_positions(0, len(self.get_sequence()), \
+			num_positions)
 
 		def choose_new_letter(letter):
 			"""
@@ -158,7 +137,7 @@ class Segment(object):
 			if position in self.mutations.keys():
 				letter = self.mutations[position]
 			else:
-				letter = self.sequence.get_string()[position]
+				letter = self.seed_sequence.get_string()[position]
 
 			self.mutations[position] = choose_new_letter(letter)
 

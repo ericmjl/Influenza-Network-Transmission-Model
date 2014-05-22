@@ -28,12 +28,13 @@ class Virus(object):
 		a list of viral Segment objects that belong to the virus.
 	
 	- VARIABLE: parent
-		a variable that references another virus as its parent, if descended from 
-		a single virus, or a tuple of two viruses, if it is a reassorted progeny.
+		a variable that references another virus as its parent, if descended 
+		from a single virus, or a tuple of two viruses, if it is a reassorted 
+		progeny.
 	
 	- TUPLE: burst_size_range
-		a two-tuple that specifies the minimum and maximum number of viruses that 
-	 	come out of one replication cycle.
+		a two-tuple that specifies the minimum and maximum number of viruses 
+		that come out of one replication cycle.
 
 	- FLOAT: generation_time
 	 	an integer that specifies how long it takes (in minutes) for one 
@@ -43,15 +44,15 @@ class Virus(object):
 
 	MAIN METHODS
 
-	- Mutate:
-	 	a method that mutates all of the segments present in the virus according
-	 	to the mutation rate of the virus.
+	- mutate:
+	 	a method that mutates all of the segments present in the virus 
+	 	according to the mutation rate of the virus.
 
-	- Replicate: 
-	 	a method that returns a copy of the virus. The Mutate function is
+	- replicate: 
+	 	a method that returns a copy of the virus. The mutate function is
 	 	guaranteed to be called.
 
-	- GenerateProgeny:
+	- generate_progeny:
 	 	a method that returns a list of progeny that were replicated out of the
 	 	virus.
 
@@ -70,28 +71,28 @@ class Virus(object):
 
 		# variable that records the id of the Virus in the Environment.
 		self.id = None
-		self.SetID()
+		self.set_id()
 
 		# variable that references to the parent Virus object.
 		self.parent = None
-		self.SetParent(parent)
+		self.set_parent(parent)
 
 		# Boolean variable that records whether this virus was reassorted from 
 		# two parents or not.
 		# TODO: TO BE DEPRECATED, AS THIS CAN BE INFERRED FROM THE PARENTS
 		# VARIABLE
 		self.reassorted = None
-		self.SetReassortedStatus(False) 
+		self.set_reassorted_status(False) 
 
 		# An integer number describing the time step in which a virus was 
 		# generated.
 		self.creation_date = None
-		self.SetCreationDate(creation_date)
+		self.set_creation_date(creation_date)
 
 		# List of segments present in the virus. This is changed 
 		# in SmallFluVirus.
 		self.segments = []
-		self.GenerateSegments(num_segments)
+		self.generate_segments(num_segments)
 
 		# This is the current host of the virus particle. Each virus particle
 		# can only have one host.
@@ -99,23 +100,24 @@ class Virus(object):
 			raise TypeError('A Host object must be specified!')
 		else:
 			self.host = host
-			host.AddVirus(self)
+			host.add_virus(self)
 
-		# Burst size is a two-tuple that describes the minimum and maximum burst
+		# Burst size is a two-tuple that describes the minimum and maximum 
+		# burst
 		# size of the virus per generation/replication cycle. 
 		self.burst_size_range = None
-		self.SetBurstSizeRange(burst_size_range)
+		self.set_burst_size_range(burst_size_range)
 
 		# Generation time is an integer number that specifies, in minutes, the 
 		# time from one generation to the next.
 		self.generation_time = None
-		self.SetGenerationTime(generation_time)
+		self.set_generation_time(generation_time)
 
 
 	def __repr__(self):
-		return str(self.GetID())
+		return str(self.get_id())
 
-	def InfectHost(self, host):
+	def infect_host(self, host):
 		"""
 		This method will make the virus infect a specified host.
 		"""
@@ -127,9 +129,9 @@ class Virus(object):
 			# Set new host for the virus.
 			self.host = host
 			# Add self to the host.
-			host.AddVirus(self)
+			host.add_virus(self)
 
-	def TransmitFromHostToHost(self, host1, host2):
+	def transmit_from_host_to_host(self, host1, host2):
 		"""
 		DEPRECATE: Move this to Host object.
 		This method will make the virus jump from one host to the next.
@@ -137,58 +139,56 @@ class Virus(object):
 		if type(host1) != Host or type(host2) != Host:
 			raise TypeError('Two Host objects must be specified!')
 		else:
-			host2.AddVirus(self)
+			host2.add_virus(self)
 			host1.RemoveVirus(self)
 			self.host = host2
 
-	def Mutate(self, segment=None):
+	def mutate(self, segment=None):
 		"""
 		This method will mutate all of the viral segments according to their 
 		specified substitution rates.
 		"""
 
-		for segment in self.GetSegments():
-			segment.Mutate()
+		for segment in self.get_segments():
+			segment.mutate()
 
-	def GenerateProgeny(self, date):
+	def generate_progeny(self, date):
 		"""
 		This method returns a list of progeny virus that have replicated from 
 		the current virus.
 		"""
-		burst_size = randint(self.burst_size_range[0], self.burst_size_range[1])
+		burst_size = randint(self.burst_size_range[0], \
+			self.burst_size_range[1])
 		# print burst_size
 		progeny_viruses = []
 
 		for i in range(burst_size):
-			new_virus = self.Replicate(date)
+			new_virus = self.replicate(date)
 			progeny_viruses.append(new_virus)
-
-		# progeny_viruses = Parallel(n_jobs=10)(delayed(self.Replicate(date))() \
-		# 	for i in range(burst_size))
 
 		return progeny_viruses
 		
-	def Replicate(self, date):
+	def replicate(self, date):
 		"""
 		This method returns a deep copy of the virus chosen to replicate.
 
 		At the end, return the new virus. 
 
-		Mutate is guaranteed to be called, but not guaranteed to happen. Whether 
+		mutate is guaranteed to be called, but not guaranteed to happen. Whether 
 		a mutation occurs or not depends on the mutation rate of the virus.
 		"""
 		new_virus = deepcopy(self)
 		new_virus.host = self.host
-		new_virus.SetCreationDate(date)
-		new_virus.SetID()
-		new_virus.SetParent(self)
-		new_virus.SetReassortedStatus(False)
-		self.host.AddVirus(new_virus)
-		new_virus.Mutate()
+		new_virus.set_creation_date(date)
+		new_virus.set_id()
+		new_virus.set_parent(self)
+		new_virus.set_reassorted_status(False)
+		self.host.add_virus(new_virus)
+		new_virus.mutate()
 
 		return new_virus
 
-	def GenerateSegment(self, segment_number, mutation_rate=0.03, \
+	def generate_segment(self, segment_number, mutation_rate=0.03, \
 		sequence=None, length=100):
 		"""
 		This method creates a segment with the parameters passed in.
@@ -218,7 +218,7 @@ class Virus(object):
 
 		return segment
 
-	def GenerateSegments(self, num_segments=2, segment_lengths=(10, 10)):
+	def generate_segments(self, num_segments=2, segment_lengths=(10, 10)):
 		"""
 		This method generates a list of segments with the tuple of segment 
 		lengths passed in as a parameter. This method basically automates
@@ -230,42 +230,42 @@ class Virus(object):
 			pass
 		segments = []
 		for i, length in enumerate(segment_lengths):
-			segments.append(self.GenerateSegment(i, sequence=None, \
+			segments.append(self.generate_segment(i, sequence=None, \
 				length=length))
 
 		return segments
 
-	def GetCreationDate(self):
+	def get_creation_date(self):
 		"""
 		This method returns the creation date of the virus.
 		"""
 		return self.creation_date
 
-	def GetGenomeLength(self):
+	def get_genome_length(self):
 		"""
 		This method returns the length of the virus genome, summed over all    
 		segments in the viral genome.
 		"""
-		length = sum(segment.length for segment in self.GetSegments())
+		length = sum(segment.length for segment in self.get_segments())
 		return length
 
-	def GetID(self):
+	def get_id(self):
 		"""This method returns the ID of the virus."""
 		return self.id
 
-	def GetParent(self):
+	def get_parent(self):
 		"""This method returns the ID of the virus' parent."""
 		return self.parent
 
-	def GetSegments(self):
+	def get_segments(self):
 		"""This method will return a list of segments."""
 		return self.segments
 
-	def GetSegment(self, segment_number):
+	def get_segment(self, segment_number):
 		"""This method will return the particular segment specified."""
 		return self.segments[segment_number]
 
-	def GetSequences(self):
+	def get_sequences(self):
 		"""
 		This method will return a list of sequences, one for each 
 		segment.
@@ -273,11 +273,11 @@ class Virus(object):
 		sequences = []
 
 		for segment in self.segments:
-			sequences.append(segment.GetSequence())
+			sequences.append(segment.get_sequence())
 
 		return sequences
 
-	def SetBurstSizeRange(self, burst_size_range):
+	def set_burst_size_range(self, burst_size_range):
 		"""
 		This method will set the burst size range. The burst size range must
 		be passed in as a two-element list or tuple, with minimum at the first 
@@ -297,17 +297,17 @@ class Virus(object):
 		else:
 			self.burst_size_range = burst_size_range
 
-	def SetCreationDate(self, date):
+	def set_creation_date(self, date):
 		"""This method sets the creation date of the virus."""
 		self.creation_date = date
 
-	def SetGenerationTime(self, generation_time):
+	def set_generation_time(self, generation_time):
 		if type(generation_time) != int:
 			raise TypeError('An integer number of minutes must be specified!')
 		else:
 			self.generation_time = generation_time
 
-	def SetID(self):
+	def set_id(self):
 		"""
 		This method sets the ID of the virus to be a unique string based on
 		the string representation of the current time and a randomly chosen
@@ -323,7 +323,7 @@ class Virus(object):
 		
 		self.id = unique_id.hexdigest()
 
-	def SetParent(self, parent_virus):
+	def set_parent(self, parent_virus):
 		"""This method records the ID of the virus' parent."""
 		if parent_virus == None:
 			self.parent = None
@@ -332,23 +332,33 @@ class Virus(object):
 		else:
 			self.parent = parent_virus
 
-	def SetSegments(self, list_of_segments):
-		"""
-		This method will override all segments present in the virus. This
-		is essentially syntactic sugar for changing a virus wholesale;
-		however, use with caution.
-		"""
-		self.segments = list_of_segments
+	# def SetSegments(self, list_of_segments):
+	# 	"""
+	# 	This method will override all segments present in the virus. This
+	# 	is essentially syntactic sugar for changing a virus wholesale;
+	# 	however, use with caution.
+	# 	"""
+	# 	self.segments = list_of_segments
 
-	def SetReassortedStatus(self, status):
+	def set_reassorted_status(self, status):
 		"""This is a helper method that will set the reassortant status."""
 		if status not in [True, False]:
 			raise TypeError('A Boolean status must be specified!')
 		else:
 			self.reassorted = status
 
-	def IsReassorted(self):
+	def is_reassorted(self):
 		"""This method returns the reassortant status of the virus."""
-		return self.reassorted
+		if len(self.get_parent) == 2:
+			return True
+
+		elif len(self.get_parent) == 1:
+			return False
+
+
+
+
+
+
 
 
