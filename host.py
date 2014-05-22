@@ -2,6 +2,7 @@ from random import random, randint, choice, sample
 from datetime import datetime
 from joblib import Parallel, delayed
 from numpy.random import normal
+from id_generator import generate_id
 
 import hashlib
 
@@ -35,8 +36,7 @@ class Host(object):
 	def __init__(self, environment):
 		super(Host, self).__init__()
 
-		self.id = None
-		self.set_id()
+		self.id = generate_id()
 
 		self.environment = None
 		self.set_environment(environment)
@@ -49,7 +49,7 @@ class Host(object):
 		return "Host %s infected with %s viruses." % (self.id, \
 			len(self.viruses))
 
-	def generate_viral_progeny(self, date):
+	def generate_viral_progeny(self):
 		"""
 		This method is the "host" acting on the "viruses" present inside it.
 		What it does is the following:
@@ -60,10 +60,11 @@ class Host(object):
 		"""
 		
 		rand_number = randint(0, len(self.get_viruses()))
+		print rand_number
 		viruses_to_replicate = sample(self.get_viruses(), rand_number)
 
 		for virus in viruses_to_replicate:
-			self.add_viruses(virus.generate_viral_progeny(date))
+			virus.generate_progeny()
 
 	def set_environment(self, environment):
 		"""
@@ -114,6 +115,14 @@ class Host(object):
 
 	def set_infection_history(self, time, source_host):
 		self.infection_history[time] = source_host
+
+	def generate_virus(self):
+		from virus import Virus
+
+		creation_date = self.environment.get_current_time()
+
+		v = Virus(creation_date=creation_date, host=self)
+
 	
 	# def set_infected_by(self, other_host):
 	# 	"""

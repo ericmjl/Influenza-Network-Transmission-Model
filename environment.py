@@ -1,9 +1,10 @@
 from virus import Virus
-from smallfluvirus import SmallFluVirus
 from random import choice, sample, randint
 from collections import defaultdict
-import networkx as nx
 from numpy.random import normal, binomial
+from host import Host
+from id_generator import generate_id
+import networkx as nx
 
 
 class Environment(object):
@@ -22,36 +23,35 @@ class Environment(object):
 	moving between them.
 	"""
 
-	def __init__(self):
+	def __init__(self, num_hosts):
 		"""Initialize the environment with only 1 default virus."""
 		super(Environment, self).__init__()
 
 		self.current_time = 0
-		
-		# # This list keeps track of the number of viruses present
-		# self.viruses = []
-		# for i in range(num_hosts):
-		# 	if virus_type == 'default':
-		# 		virus = Virus(id=i, creation_date=0)
-		# 	if virus_type == 'influenza':
-		# 		virus = SmallFluVirus(id=i, creation_date=0)
-		# 	self.viruses.append(virus)
+		self.id = generate_id()
+		self.hosts = []
+		self.generate_hosts(num_hosts)
 
-		# This variable keeps track of the number of viruses present
-		# self.num_hosts = len(self.viruses)
-
-		# The number of times that the environment simulation will run.
-		# self.timesteps = 100
+	def __repr__(self):
+		return "Environment %s with %s hosts." % (self.id, len(self.hosts))
 
 	def increment_one_timestep(self):
 		"""
-		This that happen at each time step are recorded here. Add below the 
+		Things that happen at each time step are recorded here. Add below the 
 		current line.
 		"""
 		self.current_time += 1
 
 	def get_current_time(self):
 		return self.current_time
+
+	def generate_hosts(self, num_hosts):
+		"""
+		This method generates hosts that are placed inside the environment.
+		"""
+		for i in range(num_hosts):
+			host = Host(self)
+			self.hosts.append(host)
 
 	"""To be coded up"""
 	# def RunSimulation(self):

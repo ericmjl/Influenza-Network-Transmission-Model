@@ -4,6 +4,9 @@ from copy import deepcopy
 from host import Host
 from datetime import datetime
 from joblib import Parallel, delayed
+from id_generator import generate_id
+from multiprocessing import Pool
+
 
 import hashlib
 
@@ -68,8 +71,7 @@ class Virus(object):
 		"""
 		super(Virus, self).__init__()
 
-		self.id = None
-		self.set_id()
+		self.id = generate_id()
 
 		self.parent = None
 
@@ -124,15 +126,31 @@ class Virus(object):
 			segment.mutate()
 
 	def generate_progeny(self):
+		from joblib import Parallel, delayed
+		from multiprocessing import Pool
 		"""
 		This method replicates the virus according to the burst size, which is 
 		specified by choosing an integer at random from the burst size range.
 		"""
 		burst_size = randint(self.burst_size_range[0], \
 			self.burst_size_range[1])
+		print "Burst size is %s " % burst_size
 		
-		for i in range(burst_size):
-			new_virus = self.replicate()
+		# viruses = [self.replicate() for i in range(burst_size)]
+		# print viruses
+
+		# Parallel(n_jobs=3)(delayed(self.replicate())() for x in range(burst_size))
+
+		pool = Pool(processes=None)
+		pool.map(self.replicate(), range(burst_size))
+		pool.close()
+		pool.join()
+
+		pass
+		# print new_viruses.get(timeout=1)
+
+		# for i in range(burst_size):
+		# 	self.replicate()
 		
 	def replicate(self):
 		"""
@@ -141,18 +159,20 @@ class Virus(object):
 		mutate is guaranteed to be called, but not guaranteed to happen. 
 		Whether a mutation occurs or not depends on the mutation rate of the 
 		virus.
-		
-		At the end, add the virus to the host. Return the virus just in case someone wants to 
 
+		The new virus is automatically added to the host.
 		"""
 		new_virus = deepcopy(self)
 		new_virus.host = self.host
 		new_virus.creation_date = self.host.environment.get_current_time()
 		new_virus.parent = self
-		new_virus.set_id()
+		new_virus.id = generate_id()
 		new_virus.mutate()
 
 		self.host.add_virus(new_virus)
+
+		return new_virus
+
 
 	def generate_segment(self, segment_number, mutation_rate=0.03, \
 		sequence=None, length=100):
@@ -226,22 +246,6 @@ class Virus(object):
 			raise TypeError('An integer number of minutes must be specified!')
 		else:
 			self.replication_time = replication_time
-
-	def set_id(self):
-		"""
-		This method sets the ID of the virus to be a unique string based on
-		the string representation of the current time and a randomly chosen
-		number.
-		"""
-		random_number = str(random())
-		current_time = str(datetime.now())
-
-		unique_string = random_number + current_time
-
-		unique_id = hashlib.new('sha512')
-		unique_id.update(unique_string)
-		
-		self.id = unique_id.hexdigest()
 
 	def set_parent(self, parent_virus):
 		"""This method records the ID of the virus' parent."""
