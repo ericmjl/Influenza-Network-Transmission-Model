@@ -95,15 +95,21 @@ class Virus(object):
 		return str(self.id)
 
 	def get_mutations(self):
+		"""
+		This method returns a list of dictionaries that have recorded the 
+		mutations in the virus.
+		"""
 		mutations = []
 		for segment in self.segments:
 			mutations.append(segment.get_mutations())
 		return mutations
 
 	def get_sequence(self):
+		"""
+		This method returns the sequence of each of the segments of the virus.
+		"""
 		sequences = []
 		for segment in self.segments:
-			sequence = segment.compute_sequence()
 			sequences.append(segment.compute_sequence())
 
 		return sequences
