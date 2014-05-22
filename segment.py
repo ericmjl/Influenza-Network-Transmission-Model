@@ -20,7 +20,8 @@ class Segment(object):
 		# Each segment has a segment number associated with it. The
 		# segment number does not belong to the Sequence object, but
 		# to the Segment object.
-		self.number = self.SetSegmentNumber(segment_number)
+		self.number = None
+		self.SetSegmentNumber(segment_number)
 
 		# This is syntactic sugar, can be taken away if not needed.
 		self.length = self.sequence.length
@@ -28,13 +29,14 @@ class Segment(object):
 		# Each segment has a mutation rate associated with it.
 		# This is to simulate the different mutation rates associated
 		# with each segment e.g. HA mutates faster than NP.
-		self.mutation_rate = self.SetMutationRate(mutation_rate)
+		self.mutation_rate = None
+		self.SetMutationRate(mutation_rate)
 
 	def __repr__(self):
 		return '%s %s' % (self.number, self.sequence)
 
 	def SetMutationRate(self, mutation_rate):
-		"""This method sets the mutation rate of the segment."""
+		"""This method initializes the mutation rate of the segment."""
 		if type(mutation_rate) != float:
 			raise TypeError('A floating point number must be specified!')
 		else:
@@ -42,12 +44,12 @@ class Segment(object):
 
 	def SetSegmentNumber(self, segment_number):
 		"""
-		This method sets the segment number of the segment.
+		This method initializes the segment number of the segment.
 		"""
 		if type(segment_number) != int:
 			raise TypeError('An integer must be specified!')
 		else:
-			self.number = segment_number
+			self.segment_number = segment_number
 	
 	def GenerateSequence(self):
 		"""

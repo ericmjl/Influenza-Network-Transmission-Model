@@ -2,6 +2,10 @@ from random import random, randint, choice
 from segment import Segment
 from copy import deepcopy
 from host import Host
+from datetime import datetime
+from joblib import Parallel, delayed
+
+import hashlib
 
 class Virus(object):
 	"""
@@ -11,31 +15,36 @@ class Virus(object):
 	length 10 nucleotides.
 
 	"""
-	def __init__(self, id, creation_date, host, num_segments=2, parent=None, \
-		generate_sequence=True):
+	def __init__(self, creation_date, host, num_segments=2, parent=None, \
+		generate_sequence=True, burst_size_range=(5, 50), \
+		generation_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
-		Set the id of the virus to the particular id fed in.
 		"""
-
 		super(Virus, self).__init__()
+
 		# variable that records the id of the Virus in the Environment.
-		self.id = self.SetID(id)
-		print self.GetID()
+		self.id = None
+		self.SetID()
+
 		# variable that references to the parent Virus object.
-		self.parent = self.SetParent(None) 
+		self.parent = None
+		self.SetParent(parent)
 
 		# Boolean variable that records whether this virus was reassorted from 
 		# two parents or not.
-		self.reassorted = self.SetReassortedStatus(False) 
+		self.reassorted = None
+		self.SetReassortedStatus(False) 
 
 		# An integer number describing the time step in which a virus was 
 		# generated.
-		self.creation_date = self.SetCreationDate(creation_date)
+		self.creation_date = None
+		self.SetCreationDate(creation_date)
 
 		# List of segments present in the virus. This is changed 
 		# in SmallFluVirus.
-		self.segments = self.GenerateSegments(num_segments)
+		self.segments = []
+		self.GenerateSegments(num_segments)
 
 		# This is the current host of the virus particle. Each virus particle
 		# can only have one host.
@@ -44,6 +53,17 @@ class Virus(object):
 		else:
 			self.host = host
 			host.AddVirus(self)
+
+		# Burst size is a two-tuple that describes the minimum and maximum burst
+		# size of the virus per generation/replication cycle. 
+		self.burst_size_range = None
+		self.SetBurstSizeRange(burst_size_range)
+
+		# Generation time is an integer number that specifies, in minutes, the 
+		# time from one generation to the next.
+		self.generation_time = None
+		self.SetGenerationTime(generation_time)
+
 
 	def __repr__(self):
 		return str(self.GetID())
@@ -82,8 +102,26 @@ class Virus(object):
 
 		for segment in self.GetSegments():
 			segment.Mutate()
+
+	def GenerateProgeny(self, date):
+		"""
+		This method returns a list of progeny virus that have replicated from 
+		the current virus.
+		"""
+		burst_size = randint(self.burst_size_range[0], self.burst_size_range[1])
+		# print burst_size
+		progeny_viruses = []
+
+		for i in range(burst_size):
+			new_virus = self.Replicate(date)
+			progeny_viruses.append(new_virus)
+
+		# progeny_viruses = Parallel(n_jobs=10)(delayed(self.Replicate(date))() \
+		# 	for i in range(burst_size))
+
+		return progeny_viruses
 		
-	def Replicate(self, id, date):
+	def Replicate(self, date):
 		"""
 		This method returns a deep copy of the virus chosen to replicate.
 
@@ -95,8 +133,8 @@ class Virus(object):
 		new_virus = deepcopy(self)
 		new_virus.host = self.host
 		new_virus.SetCreationDate(date)
-		new_virus.SetID(id)
-		new_virus.SetParent(self.GetID())
+		new_virus.SetID()
+		new_virus.SetParent(self)
 		new_virus.SetReassortedStatus(False)
 		self.host.AddVirus(new_virus)
 		new_virus.Mutate()
@@ -104,7 +142,7 @@ class Virus(object):
 		return new_virus
 
 	def GenerateSegment(self, segment_number, mutation_rate=0.03, \
-		sequence=None, length=10):
+		sequence=None, length=100):
 		"""
 		This method creates a segment with the parameters passed in.
 
@@ -192,16 +230,51 @@ class Virus(object):
 
 		return sequences
 
+	def SetBurstSizeRange(self, burst_size_range):
+		"""
+		This method will set the burst size range. The burst size range must
+		be passed in as a two-element list or tuple, with minimum at the first 
+		position, and maximum at the second position.
+		"""
+		if type(burst_size_range) not in [tuple, list]:
+			raise TypeError("A tuple/list of two integers must be specified!")
+
+		if len(burst_size_range) != 2:
+			raise ValueError("A two-element tuple/list must be specified!")
+
+		if type(burst_size_range[0]) != int or type(burst_size_range[1]) != int:
+			raise TypeError("Integer values of burst sizes must be specified!")
+
+		if burst_size_range[0] > burst_size_range[1]:
+			raise ValueError("The burst size range must be specified as (min, max)!")
+		else:
+			self.burst_size_range = burst_size_range
+
 	def SetCreationDate(self, date):
 		"""This method sets the creation date of the virus."""
 		self.creation_date = date
 
-	def SetID(self, id):
-		"""This method sets the ID of the virus."""
-		if type(id) != int:
-			raise TypeError('An integer must be specified!')
+	def SetGenerationTime(self, generation_time):
+		if type(generation_time) != int:
+			raise TypeError('An integer number of minutes must be specified!')
 		else:
-			self.id = 'Virus %s' % id
+			self.generation_time = generation_time
+
+	def SetID(self):
+		"""
+		This method sets the ID of the virus to be a unique string based on
+		the string representation of the current time and a randomly chosen
+		number.
+		"""
+		random_number = str(random())
+		current_time = str(datetime.now())
+
+		unique_string = random_number + current_time
+
+		unique_id = hashlib.new('sha512')
+		unique_id.update(unique_string)
+		
+		self.id = unique_id.hexdigest()
 
 	def SetParent(self, parent_virus):
 		"""This method records the ID of the virus' parent."""

@@ -22,26 +22,26 @@ class Environment(object):
 	- Make one host infect the next host.
 	"""
 
-	def __init__(self, num_viruses=1, virus_type='default'):
+	def __init__(self):
 		"""Initialize the environment with only 1 default virus."""
 		super(Environment, self).__init__()
 		
-		# This list keeps track of the number of viruses present
-		self.viruses = []
-		for i in range(num_viruses):
-			if virus_type == 'default':
-				virus = Virus(id=i, creation_date=0)
-			if virus_type == 'influenza':
-				virus = SmallFluVirus(id=i, creation_date=0)
-			self.viruses.append(virus)
+		# # This list keeps track of the number of viruses present
+		# self.viruses = []
+		# for i in range(num_hosts):
+		# 	if virus_type == 'default':
+		# 		virus = Virus(id=i, creation_date=0)
+		# 	if virus_type == 'influenza':
+		# 		virus = SmallFluVirus(id=i, creation_date=0)
+		# 	self.viruses.append(virus)
 
 		# This variable keeps track of the number of viruses present
-		self.num_viruses = len(self.viruses)
+		# self.num_hosts = len(self.viruses)
 
 		# The number of times that the environment simulation will run.
 		self.timesteps = 100
 
-"""To be coded up"""
+	"""To be coded up"""
 	# def RunSimulation(self):
 	# 	for i in self.timesteps():
 			
@@ -195,6 +195,9 @@ class Environment(object):
 		"""
 		This method returns a rounded number of descendents drawn from a 
 		normal distribution. Mean and standard deviation have to be specified.
+
+		TODO: DEPRECATE. THIS IS A PROPERTY OF THE VIRUS, NOT OF THE HOST OR 
+		ENVIRONMENT
 		"""
 		return int(round(normal(mean, stdev)))
 
@@ -203,6 +206,9 @@ class Environment(object):
 		This method returns a rounded number of mutations to make, drawn from a 
 		binomial distribution. Number of positions to choose from is the length 
 		of the virus genome, and the mutation rate is specified.
+
+		TODO: DEPRECATE. THIS IS A PROPERTY OF THE VIRUS' SEGMENT, NOT OF THE 
+		ENVIRONMENT OR HOST.
 		"""
 
 		length = virus.GetGenomeLength()
