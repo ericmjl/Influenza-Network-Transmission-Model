@@ -36,16 +36,6 @@ class Environment(object):
 	def __repr__(self):
 		return "Environment %s with %s hosts." % (self.id, len(self.hosts))
 
-	def increment_one_timestep(self):
-		"""
-		Things that happen at each time step are recorded here. Add below the 
-		current line.
-		"""
-		self.current_time += 1
-
-	def get_current_time(self):
-		return self.current_time
-
 	def add_host(self, host):
 		from host import Host
 

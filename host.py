@@ -55,19 +55,27 @@ class Host(object):
 
 		What it does is the following:
 		- Randomly sample a number of progeny to replicate.
-		- Generates the progeny by calling on the virus generate_viral_progeny() function
+		- Generates the progeny by calling on the virus 
+		  generate_viral_progeny() function
 		"""
 
 
 		rand_number = randint(0, len(self.viruses))
-		print rand_number
+		# print rand_number
 		viruses_to_replicate = sample(self.viruses, rand_number)
 
 		for virus in viruses_to_replicate:
 			virus.generate_progeny()
 
 		# import virus
-		# Parallel(n_jobs=10)(delayed(virus.generate_progeny())(virus) for virus in viruses_to_replicate)
+		# Parallel(n_jobs=10)(delayed(virus.generate_progeny())(virus) for \
+			# virus in viruses_to_replicate)
+
+	def allow_immune_removal(self):
+		"""
+		This method allows the removal of a certain number of viruses to be 
+		removed from the host due to immune system pressure
+		"""
 
 	def set_environment(self, environment):
 		"""

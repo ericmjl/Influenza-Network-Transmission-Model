@@ -1,4 +1,7 @@
 from id_generator import generate_id
+from random import sample
+
+# This is placed outside of the controller class for the purposes of replicating the 
 
 class Controller(object):
 	"""
@@ -22,10 +25,25 @@ class Controller(object):
 		host = Host(environment)
 
 	def create_hosts(self, environment, num_hosts):
-		for i in num_hosts:
+		for i in range(num_hosts):
 			self.create_host(environment)
 
-	def seed_viruses_into_hosts(self, environment, num_hosts):
+	def create_virus(self, host):
+		from virus import Virus
+		virus = Virus(creation_date=self.current_time, host=host)
+
+	def increment_timestep(self):
+		self.current_time += 1
+
+		for environment in self.environments:
+			environment.current_time += 1
+
+	def increment_one_viral_generation(self, environment):
 		"""
-		This 
+		This method causes the viruses present in the host to replicate. 
 		"""
+
+		hosts = environment.hosts
+
+		for host in hosts:
+			host.allow_viral_replication()
