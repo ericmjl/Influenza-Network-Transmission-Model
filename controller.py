@@ -1,5 +1,5 @@
 from id_generator import generate_id
-from random import sample
+from random import sample, choice
 
 class Controller(object):
 	"""
@@ -28,6 +28,7 @@ class Controller(object):
 
 	def create_virus(self, host):
 		from virus import Virus
+		
 		virus = Virus(creation_date=self.current_time, host=host)
 
 	def increment_timestep(self):
@@ -40,10 +41,12 @@ class Controller(object):
 		"""
 		This method causes the viruses present in the host to replicate. 
 		"""
-
 		hosts = environment.hosts
 
 		for host in hosts:
 			host.allow_viral_replication()
 
-	def 
+	def make_one_infection_happen(self, environment):
+		infected_host = choice(environment.get_infected_hosts())
+		uninfected_host = choice(environment.get_uninfected_hosts())
+		infected_host.infect(uninfected_host)

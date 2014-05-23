@@ -55,9 +55,11 @@ class Environment(object):
 			raise TypeError('A Host object or an integer must be specified!')
 
 	def get_infected_hosts(self):
-
 		infected_hosts = [host for host in self.hosts if len(host.viruses) > 0]
-
 		return infected_hosts
+
+	def get_uninfected_hosts(self):
+		uninfected_hosts = [host for host in self.hosts if len(host.viruses) == 0]
+		return uninfected_hosts
 
 

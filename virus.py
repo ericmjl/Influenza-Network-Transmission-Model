@@ -201,7 +201,7 @@ class Virus(object):
 		elif burst_size_range[0] > burst_size_range[1]:
 			raise ValueError("The burst size range must be specified as (min, max)!")
 		else:
-			self.burst_size = burst_size_range
+			self.burst_size_range = burst_size_range
 
 	def set_replication_time(self, replication_time):
 		if type(replication_time) != int:
