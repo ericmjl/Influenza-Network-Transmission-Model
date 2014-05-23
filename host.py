@@ -144,8 +144,10 @@ class Host(object):
 		was infected with virus or not.
 		"""
 		if len(self.viruses) == 0:
+			print("Host currently uninfected.")
 			return False
 		else:
+			print(host)
 			return True
 
 	def add_virus(self, virus):
@@ -188,7 +190,7 @@ class Host(object):
 		specified.
 		"""
 		from virus import Virus
-
+		
 		if isinstance(virus, Virus):
 			self.viruses.pop(self.viruses.index(virus))
 		elif type(virus) == int:

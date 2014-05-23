@@ -55,14 +55,14 @@ class Controller(object):
 				
 
 
-	def increment_one_generation_time(self, environment):
-		"""
-		This method causes the viruses present in the host to replicate. 
-		"""
-		hosts = environment.hosts
+	# def increment_one_generation_time(self, environment):
+	# 	"""
+	# 	This method causes the viruses present in the host to replicate. 
+	# 	"""
+	# 	hosts = environment.hosts
 
-		for host in hosts:
-			host.allow_viral_replication()
+	# 	for host in hosts:
+	# 		host.allow_viral_replication()
 
 	def make_one_infection_happen(self, environment):
 		infected_host = choice(environment.get_infected_hosts())
