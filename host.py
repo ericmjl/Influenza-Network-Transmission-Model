@@ -67,8 +67,8 @@ class Host(object):
 	def is_dead(self):
 		if len(self.viruses) > self.max_viruses:
 			return True
-
-
+		else:
+			return False
 
 	def allow_viral_replication(self):
 		"""
