@@ -38,7 +38,7 @@ class Controller(object):
 		for environment in self.environments:
 			environment.current_time += 1
 
-	def increment_one_viral_generation(self, environment):
+	def increment_one_generation_time(self, environment):
 		"""
 		This method causes the viruses present in the host to replicate. 
 		"""
