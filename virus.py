@@ -71,7 +71,7 @@ class Virus(object):
 	"""
 
 	def __init__(self, creation_date, host, num_segments=2, \
-		burst_size_range=(3, 8), replication_time=30):
+		burst_size_range=(3, 7), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""

@@ -24,20 +24,20 @@ class Controller(object):
 
 		self.environments.append(environment)
 
-	def create_host(self, environment):
-		from host import Host 
+	def create_host(self, environment, immune_halftime=2):
+		from host import Host
 
-		host = Host(environment)
+		host = Host(environment=environment, immune_halftime=immune_halftime)
 
 	def create_hosts(self, environment, num_hosts):
 		for i in range(num_hosts):
-			self.create_host(environment)
+			self.create_host(environment=environment)
 
 	def create_virus(self, host):
 		from virus import Virus
 		
 		virus = Virus(creation_date=self.current_time, host=host)
-		virus.host.set_infection_history(self.current_time, None)
+		virus.host.set_infection_history(time=self.current_time, source_host=None)
 
 	def increment_timestep(self, num_generations=10):
 		self.current_time += 1
@@ -46,23 +46,25 @@ class Controller(object):
 			environment.current_time += 1
 
 			for host in environment.get_infected_hosts():
-				if host.is_dead():
-					environment.remove_host(host)
-					print("Removing host %s" % host)
 				if not host.is_dead():
 					host.allow_viral_replication()
-					host.allow_immune_removal()
+					if host.is_dead():
+						pass
+						# environment.remove_host(host)
+					else:
+						host.allow_immune_removal()
+
+	def get_host_virus_population(self, environment):
+		virus_populations = []
+		for host in environment.hosts:
+			virus_populations.append(len(host.viruses))
 				
+		return virus_populations
 
+	def get_num_of_infected_hosts(self, environment):
+		infected_hosts = [host for host in environment.hosts if host.is_infected() == True]
 
-	# def increment_one_generation_time(self, environment):
-	# 	"""
-	# 	This method causes the viruses present in the host to replicate. 
-	# 	"""
-	# 	hosts = environment.hosts
-
-	# 	for host in hosts:
-	# 		host.allow_viral_replication()
+		return len(infected_hosts)
 
 	def make_one_infection_happen(self, environment):
 		infected_host = choice(environment.get_infected_hosts())

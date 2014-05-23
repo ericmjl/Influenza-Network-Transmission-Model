@@ -34,7 +34,7 @@ class Host(object):
 	configured by subclassing the Sampler class.
 	"""
 
-	def __init__(self, environment, immune_halftime=3):
+	def __init__(self, environment, immune_halftime=2):
 		super(Host, self).__init__()
 
 		self.id = generate_id()
@@ -54,9 +54,21 @@ class Host(object):
 		return "Host %s infected with %s viruses" % (self.id, \
 			len(self.viruses))
 
+	def is_infectious(self):
+		"""
+		The host is infectious if it is currently carrying more than 0.1 of 
+		its viral carrying capacity.
+		"""
+		if len(self.viruses) < self.max_viruses * 0.1:
+			return True
+		else:
+			return False
+
 	def is_dead(self):
 		if len(self.viruses) > self.max_viruses:
 			return True
+
+
 
 	def allow_viral_replication(self):
 		"""
@@ -87,7 +99,7 @@ class Host(object):
 		p = float(time_difference) / (self.immune_halftime + time_difference)
 		n = len(self.viruses)
 		num_viruses_to_remove = binomial(n, p)
-		print("Removing %s viruses.") % num_viruses_to_remove
+		print("Removing %s viruses out of %s viruses.") % (num_viruses_to_remove, len(self.viruses))
 
 		viruses_to_remove = sample(self.viruses, num_viruses_to_remove)
 		for virus in viruses_to_remove:
@@ -147,7 +159,7 @@ class Host(object):
 			print("Host currently uninfected.")
 			return False
 		else:
-			print(host)
+			print(self)
 			return True
 
 	def add_virus(self, virus):
@@ -190,7 +202,7 @@ class Host(object):
 		specified.
 		"""
 		from virus import Virus
-		
+
 		if isinstance(virus, Virus):
 			self.viruses.pop(self.viruses.index(virus))
 		elif type(virus) == int:
