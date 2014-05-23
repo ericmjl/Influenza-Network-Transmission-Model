@@ -37,12 +37,11 @@ class Segment(object):
 	sugar for reducing the number of lines of code, to help with readability.
 	"""
 
-	def __init__(self, segment_number, mutation_rate, sequence=None, \
-		length=10):
+	def __init__(self, segment_number, mutation_rate, length, sequence=None):
 		"""Initialize a segment with no sequence."""
 		super(Segment, self).__init__()
 		
-		self.seed_sequence = Sequence(sequence=None, length=10)
+		self.seed_sequence = Sequence(sequence=None, length=length)
 		
 		self.segment_number = None
 		self.set_segment_number(segment_number=segment_number)

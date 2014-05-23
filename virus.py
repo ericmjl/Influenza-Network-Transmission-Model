@@ -1,12 +1,11 @@
 from random import random, randint, choice
 from segment import Segment
-from copy import deepcopy
+from copy import deepcopy, copy
 from host import Host
 from datetime import datetime
 from joblib import Parallel, delayed
 from id_generator import generate_id
 from multiprocessing import Pool
-
 
 import hashlib
 
@@ -63,9 +62,9 @@ class Virus(object):
 	methods in this class are mostly helper methods that do getting/setting of 
 	attributes (with type checking for setters).
 	"""
-	
+
 	def __init__(self, creation_date, host, num_segments=2, \
-		burst_size_range=(5, 50), replication_time=30):
+		burst_size_range=(5, 10), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
@@ -86,8 +85,8 @@ class Virus(object):
 			self.host = host
 			host.add_virus(self)
 
-		self.burst_size_range = None
-		self.set_burst_size_range(burst_size_range)
+		self.burst_size_range = burst_size_range
+		# self.set_burst_size_range(burst_size_range)
 
 		self.replication_time = None
 		self.set_replication_time(replication_time)
@@ -96,17 +95,17 @@ class Virus(object):
 	def __repr__(self):
 		return str(self.id)
 
-	def get_mutations(self):
+	def mutations(self):
 		"""
 		This method returns a list of dictionaries that have recorded the 
 		mutations in the virus.
 		"""
 		mutations = []
 		for segment in self.segments:
-			mutations.append(segment.get_mutations())
+			mutations.append(segment.mutations())
 		return mutations
 
-	def get_sequence(self):
+	def sequence(self):
 		"""
 		This method returns the sequence of each of the segments of the virus.
 		"""
@@ -126,32 +125,15 @@ class Virus(object):
 			segment.mutate()
 
 	def generate_progeny(self):
-		from joblib import Parallel, delayed
-		from multiprocessing import Pool
 		"""
 		This method replicates the virus according to the burst size, which is 
 		specified by choosing an integer at random from the burst size range.
 		"""
-		burst_size = randint(self.burst_size_range[0], \
-			self.burst_size_range[1])
-		print "Burst size is %s " % burst_size
+		burst_size = randint(self.burst_size_range[0], self.burst_size_range[1])
 		
-		# viruses = [self.replicate() for i in range(burst_size)]
-		# print viruses
+		for i in range(burst_size):
+			self.replicate()
 
-		# Parallel(n_jobs=3)(delayed(self.replicate())() for x in range(burst_size))
-
-		pool = Pool(processes=None)
-		pool.map(self.replicate(), range(burst_size))
-		pool.close()
-		pool.join()
-
-		pass
-		# print new_viruses.get(timeout=1)
-
-		# for i in range(burst_size):
-		# 	self.replicate()
-		
 	def replicate(self):
 		"""
 		This method returns a deep copy of the virus chosen to replicate.
@@ -162,10 +144,9 @@ class Virus(object):
 
 		The new virus is automatically added to the host.
 		"""
-		new_virus = deepcopy(self)
-		new_virus.host = self.host
-		new_virus.creation_date = self.host.environment.get_current_time()
-		new_virus.parent = self
+		new_virus = copy(self)
+		new_virus.creation_date = self.host.environment.current_time
+		new_virus.parent = self.id
 		new_virus.id = generate_id()
 		new_virus.mutate()
 
@@ -197,25 +178,13 @@ class Virus(object):
 
 		return segments
 
-	def compute_genome_length(self):
+	def genome_length(self):
 		"""
 		This method returns the length of the virus genome, summed over all    
 		segments in the viral genome.
 		"""
 		length = sum(segment.length for segment in self.segments)
 		return length
-
-	# def get_sequences(self):
-	# 	"""
-	# 	This method will return a list of sequences, one for each 
-	# 	segment.
-	# 	"""
-	# 	sequences = []
-
-	# 	for segment in self.segments:
-	# 		sequences.append(segment.get_sequence())
-
-	# 	return sequences
 
 	def set_burst_size_range(self, burst_size_range):
 		"""
@@ -226,16 +195,16 @@ class Virus(object):
 		if type(burst_size_range) not in [tuple, list]:
 			raise TypeError("A tuple/list of two integers must be specified!")
 
-		if len(burst_size_range) != 2:
+		elif len(burst_size_range) != 2:
 			raise ValueError("A two-element tuple/list must be specified!")
 
-		if type(burst_size_range[0]) != int or type(burst_size_range[1]) != int:
+		elif type(burst_size_range[0]) != int or type(burst_size_range[1]) != int:
 			raise TypeError("Integer values of burst sizes must be specified!")
 
-		if burst_size_range[0] > burst_size_range[1]:
+		elif burst_size_range[0] > burst_size_range[1]:
 			raise ValueError("The burst size range must be specified as (min, max)!")
 		else:
-			self.burst_size_range = burst_size_range
+			self.burst_size = burst_size_range
 
 	def set_creation_date(self, date):
 		"""This method sets the creation date of the virus."""
@@ -256,27 +225,12 @@ class Virus(object):
 		else:
 			self.parent = parent_virus
 
-	# def SetSegments(self, list_of_segments):
-	# 	"""
-	# 	This method will override all segments present in the virus. This
-	# 	is essentially syntactic sugar for changing a virus wholesale;
-	# 	however, use with caution.
-	# 	"""
-	# 	self.segments = list_of_segments
-
-	# def set_reassorted_status(self, status):
-	# 	"""This is a helper method that will set the reassortant status."""
-	# 	if status not in [True, False]:
-	# 		raise TypeError('A Boolean status must be specified!')
-	# 	else:
-	# 		self.reassorted = status
-
 	def is_reassorted(self):
 		"""This method returns the reassortant status of the virus."""
-		if len(self.get_parent) == 2:
+		if len(self.parent) == 2:
 			return True
 
-		elif len(self.get_parent) == 1:
+		elif len(self.parent) == 1:
 			return False
 
 

@@ -32,14 +32,13 @@ class Host(object):
 	number of viruses that are sampled at each sampling event can be configured 
 	by subclassing the Sampler class.
 	"""
-	
+
 	def __init__(self, environment):
 		super(Host, self).__init__()
 
 		self.id = generate_id()
 
-		self.environment = None
-		self.set_environment(environment)
+		self.environment = environment
 
 		self.infection_history = dict()
 
@@ -50,21 +49,25 @@ class Host(object):
 			len(self.viruses))
 
 	def generate_viral_progeny(self):
+		
 		"""
 		This method is the "host" acting on the "viruses" present inside it.
+
 		What it does is the following:
 		- Randomly sample a number of progeny to replicate.
-		- Generates the progeny by calling on the virus generate_viral_progeny() 
-		  function
-		- Append the viral progeny to the host's list of viruses
+		- Generates the progeny by calling on the virus generate_viral_progeny() function
 		"""
-		
-		rand_number = randint(0, len(self.get_viruses()))
+
+
+		rand_number = randint(0, len(self.viruses))
 		print rand_number
-		viruses_to_replicate = sample(self.get_viruses(), rand_number)
+		viruses_to_replicate = sample(self.viruses, rand_number)
 
 		for virus in viruses_to_replicate:
 			virus.generate_progeny()
+
+		# import virus
+		# Parallel(n_jobs=10)(delayed(virus.generate_progeny())(virus) for virus in viruses_to_replicate)
 
 	def set_environment(self, environment):
 		"""
@@ -80,35 +83,19 @@ class Host(object):
 		else:
 			raise TypeError('An environment object must be specified!')
 
-	def set_id(self):
-		"""
-		This method sets the ID of the virus to be a unique string based on
-		the string representation of the current time and a randomly chosen
-		number.
-		"""
-		random_number = str(random())
-		current_time = str(datetime.now())
-
-		unique_string = random_number + current_time
-
-		unique_id = hashlib.new('sha512')
-		unique_id.update(unique_string)
-		
-		self.id = unique_id.hexdigest()
-
-	def infect(other_host, bottleneck_mean=4, bottleneck_variance=2):
+	def infect(self, other_host, bottleneck_mean=4, bottleneck_variance=2):
 		"""
 		This method will sample a random number of viruses to give to another 
 		host. It will also update the infection history of the other host.
 		"""
-		infection_time = self.environment.get_current_time()
-		other_host.set_infection_history(time, self)
+		infection_time = self.environment.current_time
+		other_host.set_infection_history(infection_time, self)
 
 		num_viruses = len(self.viruses) + 1
 		while num_viruses > len(self.viruses):
-			num_viruses = normal(bottleneck_size, bottleneck_variance)
+			num_viruses = normal(bottleneck_mean, bottleneck_variance)
 
-		viruses_to_transmit = sample(self.viruses, num_viruses)
+		viruses_to_transmit = sample(self.viruses, int(num_viruses))
 
 		other_host.add_viruses(viruses_to_transmit)
 
@@ -119,36 +106,9 @@ class Host(object):
 	def generate_virus(self):
 		from virus import Virus
 
-		creation_date = self.environment.get_current_time()
+		creation_date = self.environment.current_time
 
 		v = Virus(creation_date=creation_date, host=self)
-
-	
-	# def set_infected_by(self, other_host):
-	# 	"""
-	# 	This method will set the "infected_by" variable to the source of the 
-	# 	virus for the host.
-	# 	"""
-	# 	if other_host == None:
-	# 		self.infected_by = None
-	# 	elif type(other_host) != Host:
-	# 		raise TypeError('A Host object must be specified!')
-	# 	else:
-	# 		self.infected_by = other_host
-
-	# def set_infected_on(self, date):
-	# 	"""
-	# 	This method will set the "infected_on" variable with the date of 
-	# 	infection of the host.
-
-	# 	For now, restrict "date" to be an integer.
-	# 	"""
-	# 	if date == None:
-	# 		self.infected_on = None
-	# 	elif type(date) != int:
-	# 		raise TypeError('An integer must be specified!')
-	# 	else:
-	# 		self.infected_on = date
 
 	def is_infected(self):
 		"""
@@ -179,7 +139,7 @@ class Host(object):
 		"""
 		self.viruses.extend(viruses)
 
-	def get_viruses(self):
+	def viruses(self):
 		"""
 		This method gets the list of viruses present in the host.
 		"""

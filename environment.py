@@ -28,8 +28,11 @@ class Environment(object):
 		super(Environment, self).__init__()
 
 		self.current_time = 0
+
 		self.id = generate_id()
+		
 		self.hosts = []
+		
 		self.generate_hosts(num_hosts)
 
 	def __repr__(self):
