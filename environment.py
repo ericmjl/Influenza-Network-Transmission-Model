@@ -9,22 +9,22 @@ import networkx as nx
 
 class Environment(object):
 	"""
-	The Environment class is the highest level object in the viral simulator. 
-	Metaphorically, the Environment class can represent a geographic location
-	where Host objects interact with each other, and in the process, pass 
-	viruses from one host to the next.
+	The Environment class is the second highest level object in the viral 
+	simulator. Metaphorically, the Environment class can represent a 
+	geographic location where Host objects interact with each other, and in 
+	the process, pass viruses from one host to the next.
 
 	In the Environment class, Sampler objects can also interact with Host
 	objects, to simulate the process of sampling pathogens from the Host.
 
 	Multiple Environment objects can exist in a particular simulation, allowing
-	a host to move from Environment to Environment. This allows one to simulate 
-	the spread of Viruses from one Environment to another, by means of Hosts 
-	moving between them.
+	a host to move from Environment to Environment. This allows one to 
+	simulate the spread of Viruses from one Environment to another, by means 
+	of Hosts moving between them.
 	"""
 
-	def __init__(self, num_hosts):
-		"""Initialize the environment with only 1 default virus."""
+	def __init__(self, num_hosts=0):
+		"""Initialize the environment."""
 		super(Environment, self).__init__()
 
 		self.current_time = 0
@@ -32,8 +32,6 @@ class Environment(object):
 		self.id = generate_id()
 		
 		self.hosts = []
-		
-		self.generate_hosts(num_hosts)
 
 	def __repr__(self):
 		return "Environment %s with %s hosts." % (self.id, len(self.hosts))
@@ -48,15 +46,33 @@ class Environment(object):
 	def get_current_time(self):
 		return self.current_time
 
-	def generate_hosts(self, num_hosts):
-		"""
-		This method generates hosts that are placed inside the environment.
-		"""
-		for i in range(num_hosts):
-			host = Host(self)
-			self.hosts.append(host)
+	def add_host(self, host):
+		from host import Host
 
-	"""To be coded up"""
+		if isinstance(host, Host):
+			self.hosts.append(host)
+		else:
+			raise TypeError('A Host object must be specified!')
+
+	def remove_host(self, host):
+		from host import Host
+
+		if isinstance(host, Host):
+			self.hosts.pop(self.hosts.index(host))
+		elif type(host) == int:
+			self.hosts.pop(host)
+		else:
+			raise TypeError('A Host object or an integer must be specified!')
+
+	# def generate_hosts(self, num_hosts):
+	# 	"""
+	# 	This method generates hosts that are placed inside the environment.
+	# 	"""
+	# 	for i in range(num_hosts):
+	# 		host = Host(self)
+	# 		self.hosts.append(host)
+
+	# """To be coded up"""
 	# def RunSimulation(self):
 	# 	for i in self.timesteps():
 			

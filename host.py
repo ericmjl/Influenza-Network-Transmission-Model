@@ -38,7 +38,8 @@ class Host(object):
 
 		self.id = generate_id()
 
-		self.environment = environment
+		self.environment = None
+		self.set_environment(environment)
 
 		self.infection_history = dict()
 
@@ -48,8 +49,7 @@ class Host(object):
 		return "Host %s infected with %s viruses." % (self.id, \
 			len(self.viruses))
 
-	def generate_viral_progeny(self):
-		
+	def allow_viral_replication(self):
 		"""
 		This method is the "host" acting on the "viruses" present inside it.
 
@@ -79,11 +79,12 @@ class Host(object):
 
 		if isinstance(environment, Environment):
 			self.environment = environment
+			environment.add_host(self)
 
 		else:
 			raise TypeError('An environment object must be specified!')
 
-	def infect(self, other_host, bottleneck_mean=4, bottleneck_variance=2):
+	def infect(self, other_host, bottleneck_mean=10, bottleneck_variance=2):
 		"""
 		This method will sample a random number of viruses to give to another 
 		host. It will also update the infection history of the other host.
@@ -99,16 +100,18 @@ class Host(object):
 
 		other_host.add_viruses(viruses_to_transmit)
 
+		for virus in viruses_to_transmit:
+			self.remove_virus(virus)
+
+	def move_to_environment(self, environment):
+		"""
+		This method moves the Host from one environment to another.
+		"""
+		self.environment.remove_host(self)
+		environment.add_host(self)
 
 	def set_infection_history(self, time, source_host):
 		self.infection_history[time] = source_host
-
-	def generate_virus(self):
-		from virus import Virus
-
-		creation_date = self.environment.current_time
-
-		v = Virus(creation_date=creation_date, host=self)
 
 	def is_infected(self):
 		"""
@@ -122,7 +125,7 @@ class Host(object):
 
 	def add_virus(self, virus):
 		# The following line has to be placed inside here, in order to make 
-		# the code work.
+		# the code work. Do not remove virus or 
 		from virus import Virus
 		"""
 		This method adds a virus to the list of viruses present in the host.

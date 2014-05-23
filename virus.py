@@ -64,7 +64,7 @@ class Virus(object):
 	"""
 
 	def __init__(self, creation_date, host, num_segments=2, \
-		burst_size_range=(5, 10), replication_time=30):
+		burst_size_range=(3, 6), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
@@ -102,7 +102,7 @@ class Virus(object):
 		"""
 		mutations = []
 		for segment in self.segments:
-			mutations.append(segment.mutations())
+			mutations.append(segment.mutations)
 		return mutations
 
 	def sequence(self):
@@ -155,12 +155,10 @@ class Virus(object):
 		return new_virus
 
 
-	def generate_segment(self, segment_number, mutation_rate=0.03, \
+	def generate_segment(self, segment_number, mutation_rate=0.003, \
 		sequence=None, length=100):
 		"""
 		This method creates a segment with the parameters passed in.
-
-		If the virus does not share these default parameters, then 
 		"""
 		segment = Segment(segment_number=segment_number, \
 			mutation_rate=mutation_rate, sequence=sequence, length=length)
