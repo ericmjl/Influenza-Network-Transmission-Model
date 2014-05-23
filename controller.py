@@ -25,6 +25,9 @@ class Controller(object):
 		self.environments.append(environment)
 
 	def create_host(self, environment, immune_halftime=2):
+		"""
+		This creates a host inside a specified environment.
+		"""
 		from host import Host
 
 		host = Host(environment=environment, immune_halftime=immune_halftime)
@@ -34,12 +37,18 @@ class Controller(object):
 			self.create_host(environment=environment)
 
 	def create_virus(self, host):
+		"""
+		This creates a virus inside a specified host.
+		"""
 		from virus import Virus
 		
 		virus = Virus(creation_date=self.current_time, host=host)
 		virus.host.set_infection_history(time=self.current_time, source_host=None)
 
 	def increment_timestep(self, num_generations=10):
+		"""
+		This set of commands happens when one increments one timestep. 
+		"""
 		self.current_time += 1
 
 		for environment in self.environments:
@@ -50,7 +59,6 @@ class Controller(object):
 					host.allow_viral_replication()
 					if host.is_dead():
 						pass
-						# environment.remove_host(host)
 					else:
 						host.allow_immune_removal()
 

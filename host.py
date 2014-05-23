@@ -171,9 +171,6 @@ class Host(object):
 		"""
 		if not isinstance(virus, Virus):
 			raise TypeError('A Virus object must be specified!')
-		# elif len(self.viruses) >= self.max_viruses:
-		# 	print('The host has exceeded virus capacity and is dead. Removing from environment.')
-		# 	self.environment.remove_host(self)
 		else:
 			self.viruses.append(virus)
 
