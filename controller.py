@@ -70,6 +70,11 @@ class Controller(object):
 		return virus_populations
 
 	def get_num_of_infected_hosts(self, environment):
+		"""
+		This method counts the number of alive hosts that are infected with 
+		viruses.
+		"""
+
 		infected_hosts = [host for host in environment.hosts if host.is_infected() == True and host.is_dead() == False]
 
 		return len(infected_hosts)
