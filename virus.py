@@ -74,8 +74,7 @@ class Virus(object):
 
 		self.parent = None
 
-		self.creation_date = None
-		self.set_creation_date(creation_date)
+		self.creation_date = creation_date
 
 		self.segments = self.generate_segments(num_segments=num_segments)
 
@@ -85,8 +84,8 @@ class Virus(object):
 			self.host = host
 			host.add_virus(self)
 
-		self.burst_size_range = burst_size_range
-		# self.set_burst_size_range(burst_size_range)
+		self.burst_size_range = None
+		self.set_burst_size_range(burst_size_range)
 
 		self.replication_time = None
 		self.set_replication_time(replication_time)
@@ -203,10 +202,6 @@ class Virus(object):
 			raise ValueError("The burst size range must be specified as (min, max)!")
 		else:
 			self.burst_size = burst_size_range
-
-	def set_creation_date(self, date):
-		"""This method sets the creation date of the virus."""
-		self.creation_date = date
 
 	def set_replication_time(self, replication_time):
 		if type(replication_time) != int:

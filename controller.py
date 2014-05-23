@@ -1,8 +1,6 @@
 from id_generator import generate_id
 from random import sample
 
-# This is placed outside of the controller class for the purposes of replicating the 
-
 class Controller(object):
 	"""
 	The controller object is the overall manager for the viral simulation.
@@ -47,3 +45,5 @@ class Controller(object):
 
 		for host in hosts:
 			host.allow_viral_replication()
+
+	
