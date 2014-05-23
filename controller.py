@@ -46,4 +46,4 @@ class Controller(object):
 		for host in hosts:
 			host.allow_viral_replication()
 
-	
+	def 
