@@ -99,7 +99,6 @@ class Host(object):
 		p = float(time_difference) / (self.immune_halftime + time_difference)
 		n = len(self.viruses)
 		num_viruses_to_remove = binomial(n, p)
-		print("Removing %s viruses out of %s viruses.") % (num_viruses_to_remove, len(self.viruses))
 
 		viruses_to_remove = sample(self.viruses, num_viruses_to_remove)
 		for virus in viruses_to_remove:
@@ -156,10 +155,8 @@ class Host(object):
 		was infected with virus or not.
 		"""
 		if len(self.viruses) == 0:
-			print("Host currently uninfected.")
 			return False
 		else:
-			print(self)
 			return True
 
 	def add_virus(self, virus):

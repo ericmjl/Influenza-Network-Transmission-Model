@@ -139,11 +139,8 @@ class Virus(object):
 		
 		results = Parallel()(delayed(_replicate)(self) for i in range(burst_size))
 
-		# print results
 
 		self.host.add_viruses(results)
-		# for i in range(burst_size):
-		# 	self.replicate()
 
 	def replicate(self):
 		"""
