@@ -9,6 +9,13 @@ from multiprocessing import Pool
 
 import hashlib
 
+def _replicate(virus):
+	"""
+	This version of replicate is called in the Parallel delayed function, to 
+	allow this to speed up the replication of viruses.
+	"""
+	return virus.replicate()
+
 class Virus(object):
 	"""
 	The Virus class is at the third highest level in the viral simulator. The 
@@ -64,7 +71,7 @@ class Virus(object):
 	"""
 
 	def __init__(self, creation_date, host, num_segments=2, \
-		burst_size_range=(3, 6), replication_time=30):
+		burst_size_range=(3, 8), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
@@ -130,8 +137,13 @@ class Virus(object):
 		"""
 		burst_size = randint(self.burst_size_range[0], self.burst_size_range[1])
 		
-		for i in range(burst_size):
-			self.replicate()
+		results = Parallel()(delayed(_replicate)(self) for i in range(burst_size))
+
+		# print results
+
+		self.host.add_viruses(results)
+		# for i in range(burst_size):
+		# 	self.replicate()
 
 	def replicate(self):
 		"""
@@ -148,9 +160,10 @@ class Virus(object):
 		new_virus.parent = self.id
 		new_virus.id = generate_id()
 		new_virus.mutate()
-
 		self.host.add_virus(new_virus)
 
+		# Return statement included for the purposes of Parallel processing in 
+		# the generate_progeny function.
 		return new_virus
 
 

@@ -1,10 +1,11 @@
 from random import random, randint, choice, sample
 from datetime import datetime
 from joblib import Parallel, delayed
-from numpy.random import normal
+from numpy.random import normal, binomial
 from id_generator import generate_id
 
 import hashlib
+
 
 class Host(object):
 	"""
@@ -21,19 +22,19 @@ class Host(object):
 
 	For the purposes of knowing the ground truth of infection, Host objects
 	are capable of keeping track of who they were infected by and when. 
-	Currently, this is kept track of as two individual variables. In the future,
-	in order to generalize this to multiple infections, this will be kept
-	track of as a single dictionary, where the keys are the time of infection,
-	and the values are the Host objects that were the source of infection.
-	TODO: CHANGE INFECTED_BY AND INFECTED_ON TO INFECTION_HISTORY.
+	Currently, this is kept track of as two individual variables. In the 
+	future, in order to generalize this to multiple infections, this will be 
+	kept track of as a single dictionary, where the keys are the time of 
+	infection, and the values are the Host objects that were the source of 
+	infection.
 
 	Sampler objects can interact with Host objects. Sampler objects can either 
 	sample everything from the host, or it can sample a subset of viruses. The 
-	number of viruses that are sampled at each sampling event can be configured 
-	by subclassing the Sampler class.
+	number of viruses that are sampled at each sampling event can be
+	configured by subclassing the Sampler class.
 	"""
 
-	def __init__(self, environment):
+	def __init__(self, environment, immune_halftime=3):
 		super(Host, self).__init__()
 
 		self.id = generate_id()
@@ -43,11 +44,19 @@ class Host(object):
 
 		self.infection_history = dict()
 
+		self.immune_halftime = immune_halftime
+
+		self.max_viruses = 5000
+
 		self.viruses = []
 
 	def __repr__(self):
-		return "Host %s infected with %s viruses." % (self.id, \
+		return "Host %s infected with %s viruses" % (self.id, \
 			len(self.viruses))
+
+	def is_dead(self):
+		if len(self.viruses) > self.max_viruses:
+			return True
 
 	def allow_viral_replication(self):
 		"""
@@ -59,23 +68,31 @@ class Host(object):
 		  generate_viral_progeny() function
 		"""
 
-
 		rand_number = randint(0, len(self.viruses))
-		# print rand_number
 		viruses_to_replicate = sample(self.viruses, rand_number)
 
 		for virus in viruses_to_replicate:
 			virus.generate_progeny()
 
-		# import virus
-		# Parallel(n_jobs=10)(delayed(virus.generate_progeny())(virus) for \
-			# virus in viruses_to_replicate)
-
 	def allow_immune_removal(self):
 		"""
 		This method allows the removal of a certain number of viruses to be 
-		removed from the host due to immune system pressure
+		removed from the host due to immune system pressure.
 		"""
+
+		current_time = self.environment.current_time
+		last_infection_time = max(self.infection_history.keys())
+		time_difference = current_time - last_infection_time
+
+		p = float(time_difference) / (self.immune_halftime + time_difference)
+		n = len(self.viruses)
+		num_viruses_to_remove = binomial(n, p)
+		print("Removing %s viruses.") % num_viruses_to_remove
+
+		viruses_to_remove = sample(self.viruses, num_viruses_to_remove)
+		for virus in viruses_to_remove:
+			self.remove_virus(virus)
+
 
 	def set_environment(self, environment):
 		"""
@@ -138,10 +155,13 @@ class Host(object):
 		"""
 		This method adds a virus to the list of viruses present in the host.
 		"""
-		if isinstance(virus, Virus):
-			self.viruses.append(virus)
-		else:
+		if not isinstance(virus, Virus):
 			raise TypeError('A Virus object must be specified!')
+		# elif len(self.viruses) >= self.max_viruses:
+		# 	print('The host has exceeded virus capacity and is dead. Removing from environment.')
+		# 	self.environment.remove_host(self)
+		else:
+			self.viruses.append(virus)
 
 	def add_viruses(self, viruses):
 		"""

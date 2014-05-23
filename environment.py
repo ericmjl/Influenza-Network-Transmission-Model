@@ -32,9 +32,18 @@ class Environment(object):
 		self.id = generate_id()
 		
 		self.hosts = []
+		for i in range(num_hosts):
+			self.create_host()
 
 	def __repr__(self):
 		return "Environment %s with %s hosts." % (self.id, len(self.hosts))
+
+	def create_host(self):
+		from host import Host
+
+		h = Host(self)
+
+		return h
 
 	def add_host(self, host):
 		from host import Host
