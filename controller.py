@@ -55,12 +55,8 @@ class Controller(object):
 			environment.current_time += 1
 
 			for host in environment.get_infected_hosts():
-				if not host.is_dead():
-					host.allow_viral_replication()
-					if host.is_dead():
-						pass
-					else:
-						host.allow_immune_removal()
+				host.allow_viral_replication()
+				host.allow_immune_removal()
 
 	def get_host_virus_population(self, environment):
 		virus_populations = []
@@ -80,9 +76,12 @@ class Controller(object):
 		return len(infected_hosts)
 
 	def make_one_infection_happen(self, environment):
-		infected_host = choice(environment.get_infected_hosts())
-		uninfected_host = choice(environment.get_uninfected_hosts())
-		infected_host.infect(uninfected_host)
+		if len(environment.get_infected_hosts()) != 0:
+			infected_host = choice(environment.get_infected_hosts())
+			uninfected_host = choice(environment.get_uninfected_hosts())
+			infected_host.infect(uninfected_host)
+		else:
+			pass
 
 	def make_many_infections_happen(self, environment, num_infections):
 		for i in range(num_infections):

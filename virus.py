@@ -6,6 +6,7 @@ from datetime import datetime
 from joblib import Parallel, delayed
 from id_generator import generate_id
 from multiprocessing import Pool
+import ctypes
 
 import hashlib
 
@@ -71,7 +72,7 @@ class Virus(object):
 	"""
 
 	def __init__(self, creation_date, host, num_segments=2, \
-		burst_size_range=(3, 7), replication_time=30):
+		burst_size_range=(5, 10), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
@@ -137,10 +138,19 @@ class Virus(object):
 		"""
 		burst_size = randint(self.burst_size_range[0], self.burst_size_range[1])
 		
+		# burst_size = 5
+
 		results = Parallel()(delayed(_replicate)(self) for i in range(burst_size))
 
+		# print('Adding viruses to host %s' % id(self.host))
 
-		self.host.add_viruses(results)
+
+		# for i in range(burst_size):
+			# self.replicate()
+
+		# self.host.add_viruses(results)
+
+		return burst_size
 
 	def replicate(self):
 		"""
@@ -164,13 +174,13 @@ class Virus(object):
 		return new_virus
 
 
-	def generate_segment(self, segment_number, mutation_rate=0.003, \
-		sequence=None, length=100):
+	def generate_segment(self, segment_number, substitution_rate=7E-3, \
+		sequence=None, length=1800):
 		"""
 		This method creates a segment with the parameters passed in.
 		"""
 		segment = Segment(segment_number=segment_number, \
-			mutation_rate=mutation_rate, sequence=sequence, length=length)
+			substitution_rate=substitution_rate, sequence=sequence, length=length)
 
 		return segment
 

@@ -3,6 +3,7 @@ from datetime import datetime
 from joblib import Parallel, delayed
 from numpy.random import normal, binomial
 from id_generator import generate_id
+import ctypes
 
 import hashlib
 
@@ -34,7 +35,7 @@ class Host(object):
 	configured by subclassing the Sampler class.
 	"""
 
-	def __init__(self, environment, immune_halftime=2):
+	def __init__(self, environment, immune_halftime=2 ):
 		super(Host, self).__init__()
 
 		self.id = generate_id()
@@ -79,12 +80,28 @@ class Host(object):
 		- Generates the progeny by calling on the virus 
 		  generate_viral_progeny() function
 		"""
+		if self.is_dead() == False:
 
-		rand_number = randint(0, len(self.viruses))
-		viruses_to_replicate = sample(self.viruses, rand_number)
+			# print('Host %s currently has %s viruses.' % (id(self), len(self.viruses)))
+			
+			rand_number = randint(0, len(self.viruses))
+			# print('Replicating %s viruses.' % rand_number)
+			
+			viruses_to_replicate = sample(self.viruses, rand_number)
 
-		for virus in viruses_to_replicate:
-			virus.generate_progeny()
+			total_viruses_generated = 0
+			for virus in viruses_to_replicate:
+				total_viruses_generated += virus.generate_progeny()
+
+			# print('Total of %s viruses generated in host %s. ' % (total_viruses_generated, id(self)))
+			# print('Host %s now has %s viruses.' % (id(self), len(self.viruses)))
+
+			return self
+
+		elif self.is_dead() == True:
+			return self
+			pass
+
 
 	def allow_immune_removal(self):
 		"""
@@ -98,11 +115,19 @@ class Host(object):
 
 		p = float(time_difference) / (self.immune_halftime + time_difference)
 		n = len(self.viruses)
+
+		# print("Time Difference: %s, Probability: %s" % (time_difference, p))
 		num_viruses_to_remove = binomial(n, p)
+		# num_viruses_to_remove = int(0.6 * len(self.viruses))
+		# print('Removing %s viruses out of %s viruses from host %s.' % (num_viruses_to_remove, len(self.viruses), id(self)))
 
 		viruses_to_remove = sample(self.viruses, num_viruses_to_remove)
 		for virus in viruses_to_remove:
 			self.remove_virus(virus)
+
+		# print('Host %s is left with %s viruses.' % (id(self), len(self.viruses)))
+
+		return self
 
 
 	def set_environment(self, environment):
@@ -130,14 +155,16 @@ class Host(object):
 
 		num_viruses = len(self.viruses) + 1
 		while num_viruses > len(self.viruses):
-			num_viruses = normal(bottleneck_mean, bottleneck_variance)
+			num_viruses = int(normal(bottleneck_mean, bottleneck_variance))
 
-		viruses_to_transmit = sample(self.viruses, int(num_viruses))
-
-		other_host.add_viruses(viruses_to_transmit)
+		# print('Transmission %s viruses out of %s viruses from host %s to host %s.' % (num_viruses, len(self.viruses), id(self), id(other_host)))
+		viruses_to_transmit = sample(self.viruses, num_viruses)
 
 		for virus in viruses_to_transmit:
+			virus.host = other_host
 			self.remove_virus(virus)
+
+		other_host.add_viruses(viruses_to_transmit)
 
 	def move_to_environment(self, environment):
 		"""
@@ -148,6 +175,12 @@ class Host(object):
 
 	def set_infection_history(self, time, source_host):
 		self.infection_history[time] = source_host
+
+	def is_infectious(self):
+		if len(self.viruses) < self.max_viruses / 10:
+			return False
+		else:
+			return True
 
 	def is_infected(self):
 		"""
@@ -160,8 +193,7 @@ class Host(object):
 			return True
 
 	def add_virus(self, virus):
-		# The following line has to be placed inside here, in order to make 
-		# the code work. Do not remove virus or 
+		# The following line has to be placed inside here, in order to make the code work. Do not remove.
 		from virus import Virus
 		"""
 		This method adds a virus to the list of viruses present in the host.

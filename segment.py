@@ -18,11 +18,9 @@ class Segment(object):
 	- DICTIONARY: mutations
 		a dictionary of the mutations that have been made to the virus.
 
-	- FLOAT: mutation_rate
+	- FLOAT: substitution_rate
 		a floating point number that describes the mutation rate of the virus.
-		The units of this number are: substitutions per site per generation time. 
-		This can be calculated by dividing the known substitution rate (in 
-		substitutions per site per year) by the generation time (in years).
+		The units of this number are: substitutions per site per year.
 
 	----------
 
@@ -37,11 +35,12 @@ class Segment(object):
 	sugar for reducing the number of lines of code, to help with readability.
 	"""
 
-	def __init__(self, segment_number, mutation_rate, length, sequence=None):
-		"""Initialize a segment with no sequence."""
+	def __init__(self, segment_number, substitution_rate, length, \
+		sequence=None):
+		"""Initialize a segment with specified parameters."""
 		super(Segment, self).__init__()
 		
-		self.seed_sequence = Sequence(sequence=None, length=length)
+		self.seed_sequence = Sequence(sequence=sequence, length=length)
 		
 		self.segment_number = None
 		self.set_segment_number(segment_number=segment_number)
@@ -50,18 +49,18 @@ class Segment(object):
 
 		self.length = len(self.compute_sequence())
 
-		self.mutation_rate = None
-		self.set_mutation_rate(mutation_rate)
+		self.substitution_rate = None
+		self.set_substitution_rate(substitution_rate)
 
 	def __repr__(self):
 		return 'Segment %s' % self.segment_number
 
-	def set_mutation_rate(self, rate):
+	def set_substitution_rate(self, rate):
 		"""This method initializes the mutation rate of the segment."""
 		if type(rate) != float:
 			raise TypeError('A floating point number must be specified!')
 		else:
-			self.mutation_rate = rate
+			self.substitution_rate = rate
 
 	def set_segment_number(self, segment_number):
 		"""
@@ -101,7 +100,7 @@ class Segment(object):
 		segment's mutation dictionary.
 		"""
 		n = self.length
-		p = self.mutation_rate
+		p = float(self.substitution_rate) / 365
 
 		num_positions = binomial(n,p)
 
