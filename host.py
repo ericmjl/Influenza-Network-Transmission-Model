@@ -154,15 +154,15 @@ class Host(object):
 		"""
 		if self.is_dead() == False:
 			n_leftover = self.num_progeny_leftover()
-			print("Generating %s progeny in host %s..." % \
-				(n_leftover, self.id[0:5]))
+			# print("Generating %s progeny in host %s..." % \
+				# (n_leftover, self.id[0:5]))
 			# t1 = time()
 			progeny = self.generate_viral_progeny(num_viruses=n_leftover)
 			# t2 = time()
 			
 			# td = t2 - t1
 
-			print("%s progeny generated in host %s." % (len(progeny), self.id[0:5]))
+			# print("%s progeny generated in host %s." % (len(progeny), self.id[0:5]))
 			parents_to_remove = sample(self.viruses, \
 				self.num_parental_removed())
 			for virus in parents_to_remove:
@@ -190,10 +190,10 @@ class Host(object):
 		"""
 		if self.is_dead() == False:
 
-			# print('Host %s currently has %s viruses.' % (id(self), len(self.viruses)))
+			# # print('Host %s currently has %s viruses.' % (id(self), len(self.viruses)))
 			
 			rand_number = randint(0, len(self.viruses))
-			# print('Replicating %s viruses.' % rand_number)
+			# # print('Replicating %s viruses.' % rand_number)
 			
 			viruses_to_replicate = sample(self.viruses, rand_number)
 
@@ -203,8 +203,8 @@ class Host(object):
 
 			self.add_viruses(viruses_generated)
 
-			# print('Total of %s viruses generated in host %s. ' % (total_viruses_generated, id(self)))
-			# print('Host %s now has %s viruses.' % (id(self), len(self.viruses)))
+			# # print('Total of %s viruses generated in host %s. ' % (total_viruses_generated, id(self)))
+			# # print('Host %s now has %s viruses.' % (id(self), len(self.viruses)))
 
 			return self
 
@@ -229,16 +229,16 @@ class Host(object):
 		p = float(time_difference) / (self.immune_halftime + time_difference)
 		n = len(self.viruses)
 
-		# print("Time Difference: %s, Probability: %s" % (time_difference, p))
+		# # print("Time Difference: %s, Probability: %s" % (time_difference, p))
 		num_viruses_to_remove = binomial(n, p)
 		# num_viruses_to_remove = int(0.6 * len(self.viruses))
-		# print('Removing %s viruses out of %s viruses from host %s.' % (num_viruses_to_remove, len(self.viruses), id(self)))
+		# # print('Removing %s viruses out of %s viruses from host %s.' % (num_viruses_to_remove, len(self.viruses), id(self)))
 
 		viruses_to_remove = sample(self.viruses, num_viruses_to_remove)
 		for virus in viruses_to_remove:
 			self.remove_virus(virus)
 
-		# print('Host %s is left with %s viruses.' % (id(self), len(self.viruses)))
+		# # print('Host %s is left with %s viruses.' % (id(self), len(self.viruses)))
 
 		return self
 
@@ -270,7 +270,7 @@ class Host(object):
 		while num_viruses > len(self.viruses):
 			num_viruses = int(normal(bottleneck_mean, bottleneck_variance))
 
-		# print('Transmission %s viruses out of %s viruses from host %s to host %s.' % (num_viruses, len(self.viruses), id(self), id(other_host)))
+		# # print('Transmission %s viruses out of %s viruses from host %s to host %s.' % (num_viruses, len(self.viruses), id(self), id(other_host)))
 		viruses_to_transmit = sample(self.viruses, num_viruses)
 
 		for virus in viruses_to_transmit:

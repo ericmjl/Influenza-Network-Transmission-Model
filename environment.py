@@ -51,7 +51,7 @@ class Environment(object):
 
 		if isinstance(host, Host):
 			self.hosts.append(host)
-			print('Adding host %s... to environment %s...' % (host.id[0:5], self.id[0:5]))
+			# print('Adding host %s... to environment %s...' % (host.id[0:5], self.id[0:5]))
 		else:
 			raise TypeError('A Host object must be specified!')
 

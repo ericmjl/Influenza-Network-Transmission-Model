@@ -151,8 +151,8 @@ class Virus(object):
 		for i in range(burst_size):
 			progeny.append(self.replicate())
 		
-		print('%s progeny have been made from virus %s in host %s' % \
-			(len(progeny), self.id[0:5], self.host.id[0:5]))
+		# print('%s progeny have been made from virus %s in host %s' % \
+			# (len(progeny), self.id[0:5], self.host.id[0:5]))
 
 		return progeny
 
