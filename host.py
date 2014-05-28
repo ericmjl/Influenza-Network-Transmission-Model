@@ -172,9 +172,17 @@ class Host(object):
 		"""
 		self.environment.remove_host(self)
 		environment.add_host(self)
+		self.set_environment(environment)
 
 	def set_infection_history(self, time, source_host):
-		self.infection_history[time] = source_host
+		self.infection_history[time] = source_host\
+
+	def was_infected(self):
+		if len(self.infection_history.keys()) > 0:
+			return True
+
+		else:
+			return False
 
 	def is_infectious(self):
 		if len(self.viruses) < self.max_viruses / 10:

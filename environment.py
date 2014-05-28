@@ -71,7 +71,9 @@ class Environment(object):
 		uninfected_hosts = [host for host in self.hosts if len(host.viruses) == 0]
 		return uninfected_hosts
 
-
+	def get_naive_hosts(self):
+		naive_hosts = [host for host in self.hosts if host.was_infected() == False]
+		return naive_hosts
 
 		
 

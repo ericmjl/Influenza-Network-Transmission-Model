@@ -59,6 +59,8 @@ class Controller(object):
 				host.allow_immune_removal()
 
 	def get_host_virus_population(self, environment):
+		# virus_populations = (len(host.viruses) for host in environment.hosts)
+
 		virus_populations = []
 		for host in environment.hosts:
 			virus_populations.append(len(host.viruses))
@@ -78,8 +80,8 @@ class Controller(object):
 	def make_one_infection_happen(self, environment):
 		if len(environment.get_infected_hosts()) != 0:
 			infected_host = choice(environment.get_infected_hosts())
-			uninfected_host = choice(environment.get_uninfected_hosts())
-			infected_host.infect(uninfected_host)
+			niave_host = choice(environment.get_naive_hosts())
+			infected_host.infect(niave_host)
 		else:
 			pass
 
