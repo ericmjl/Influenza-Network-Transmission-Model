@@ -55,6 +55,9 @@ class Environment(object):
 			raise TypeError('A Host object must be specified!')
 
 	def remove_host(self, host):
+		"""
+		This method removes a particular host from the environment.
+		"""
 		from host import Host
 
 		if isinstance(host, Host):
@@ -65,14 +68,17 @@ class Environment(object):
 		else:
 			raise TypeError('A Host object or an integer must be specified!')
 
-	def get_infected_hosts(self):
+	def infected_hosts(self):
+		"""
+		This method 
+		"""
 		infected_hosts = [host for host in self.hosts if len(host.viruses) > 0]
 		return infected_hosts
 
-	def get_uninfected_hosts(self):
+	def uninfected_hosts(self):
 		uninfected_hosts = [host for host in self.hosts if len(host.viruses) == 0]
 		return uninfected_hosts
 
-	def get_naive_hosts(self):
+	def naive_hosts(self):
 		naive_hosts = [host for host in self.hosts if host.was_infected() == False]
 		return naive_hosts

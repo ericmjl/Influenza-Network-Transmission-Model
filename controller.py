@@ -60,7 +60,7 @@ class Controller(object):
 		for environment in self.environments:
 			environment.current_time += 1
 
-			for host in environment.get_infected_hosts():
+			for host in environment.infected_hosts():
 				host.allow_one_cycle_of_replication()
 
 	def get_host_virus_population(self, environment):
@@ -85,9 +85,9 @@ class Controller(object):
 		return len(infected_hosts)
 
 	def make_one_infection_happen(self, environment):
-		if len(environment.get_infected_hosts()) != 0:
-			infected_host = choice(environment.get_infected_hosts())
-			niave_host = choice(environment.get_naive_hosts())
+		if len(environment.infected_hosts()) != 0:
+			infected_host = choice(environment.infected_hosts())
+			niave_host = choice(environment.naive_hosts())
 			infected_host.infect(niave_host)
 		else:
 			pass

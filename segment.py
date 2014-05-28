@@ -56,7 +56,11 @@ class Segment(object):
 		return 'Segment %s' % self.segment_number
 
 	def set_substitution_rate(self, rate):
-		"""This method initializes the mutation rate of the segment."""
+		"""
+		This method initializes the mutation rate of the segment. It also 
+		checks to make sure that the mutation rate is a floating point number, 
+		which is important for computation later on.
+		"""
 		if type(rate) != float:
 			raise TypeError('A floating point number must be specified!')
 		else:
