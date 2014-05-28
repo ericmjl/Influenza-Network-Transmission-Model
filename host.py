@@ -88,9 +88,9 @@ class Host(object):
 		This method precomputes the number of progeny to be made.
 		"""
 		rand_number = randint(0, len(self.viruses))
-		viruses = sample(self.viruses, rand_number) # the viruses to replicate
+		parents = sample(self.viruses, rand_number) # the viruses to replicate
 
-		made = sum(virus.burst_size for virus in viruses)
+		made = sum(virus.burst_size for virus in parents)
 
 		return made
 
@@ -117,11 +117,21 @@ class Host(object):
 
 		return leftover
 
-	def generate_n_progeny(self, n):
+	def generate_viral_progeny(self, num_viruses):
 		"""
 		This method randomly samples from the current pool of viruses, and  
-		generates n progeny from them.
+		generates n progeny from them. The number of progeny that comes out 
+		may be slightly bigger than the n specified.
 		"""
+		progeny = []
+		while len(progeny) < num_viruses:
+			parent = choice(self.viruses)
+			
+			
+
+
+
+
 
 	def allow_viral_replication(self):
 		"""

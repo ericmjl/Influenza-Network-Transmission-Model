@@ -147,13 +147,13 @@ class Virus(object):
 		
 		# burst_size = 5
 
-		results = Parallel()(delayed(_replicate)(self) for i in range(burst_size))
+		# results = Parallel()(delayed(_replicate)(self) for i in range(burst_size))
 
 		# print('Adding viruses to host %s' % id(self.host))
 
-
-		# for i in range(burst_size):
-			# self.replicate()
+		progeny = []
+		for i in range(burst_size):
+			self.replicate()
 
 		# self.host.add_viruses(results)
 
@@ -166,15 +166,13 @@ class Virus(object):
 		mutate is guaranteed to be called, but not guaranteed to happen. 
 		Whether a mutation occurs or not depends on the mutation rate of the 
 		virus.
-
-		The new virus is automatically added to the host.
 		"""
 		new_virus = copy(self)
 		new_virus.creation_date = self.host.environment.current_time
 		new_virus.parent = self.id
 		new_virus.id = generate_id()
 		new_virus.mutate()
-		self.host.add_virus(new_virus)
+		# self.host.add_virus(new_virus)
 
 		# Return statement included for the purposes of Parallel processing in 
 		# the generate_progeny function.
