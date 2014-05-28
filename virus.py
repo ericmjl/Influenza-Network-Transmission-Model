@@ -131,6 +131,13 @@ class Virus(object):
 		for segment in self.segments:
 			segment.mutate()
 
+	def burst_size(self):
+		"""
+		This method returns an integer number between the burst size range 
+		values inclusive.
+		"""
+		return randint(self.burst_size_range[0], self.burst_size_range[1])
+
 	def generate_progeny(self):
 		"""
 		This method replicates the virus according to the burst size, which is 

@@ -71,6 +71,58 @@ class Host(object):
 		else:
 			return False
 
+	def immune_removal_probability(self):
+		p = float(time_difference) / (self.immune_halftime + time_difference)
+
+		return p
+
+	def timespan_of_infection(self):
+		current_time = self.environment.current_time
+		last_infection_time = max(self.infection_history.keys())
+		time_difference = current_time - last_infection_time
+
+		return time_difference
+
+	def num_progeny_made(self):
+		"""
+		This method precomputes the number of progeny to be made.
+		"""
+		rand_number = randint(0, len(self.viruses))
+		viruses = sample(self.viruses, rand_number) # the viruses to replicate
+
+		made = sum(virus.burst_size for virus in viruses)
+
+		return made
+
+	def num_progeny_removed(self, num_progeny_made):
+		"""
+		This method precomputes the number of progeny to be removed from the 
+		host.
+		"""
+		
+		time_difference = self.timespan_of_infection()
+
+		p = self.immune_removal_probability()
+		n = num_progeny_made
+
+		removed = binomial(n, p)
+
+		return removed
+
+	def num_progeny_leftover(self):
+		made = self.num_progeny_made()
+		removed = self.num_progeny_removed(made)
+
+		leftover = made - removed
+
+		return leftover
+
+	def generate_n_progeny(self, n):
+		"""
+		This method randomly samples from the current pool of viruses, and  
+		generates n progeny from them.
+		"""
+
 	def allow_viral_replication(self):
 		"""
 		This method is the "host" acting on the "viruses" present inside it.
@@ -79,6 +131,9 @@ class Host(object):
 		- Randomly sample a number of progeny to replicate.
 		- Generates the progeny by calling on the virus 
 		  generate_viral_progeny() function
+
+		Note: this function might be deprecated in favor of precomputing the 
+		number of progeny.
 		"""
 		if self.is_dead() == False:
 
@@ -107,6 +162,9 @@ class Host(object):
 		"""
 		This method allows the removal of a certain number of viruses to be 
 		removed from the host due to immune system pressure.
+
+		Note: this method may be deprecated in favor of precomputing the 
+		number of progeny.
 		"""
 
 		current_time = self.environment.current_time
