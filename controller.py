@@ -55,12 +55,13 @@ class Controller(object):
 			environment.current_time += 1
 
 			for host in environment.get_infected_hosts():
-				host.allow_viral_replication()
-				host.allow_immune_removal()
+				host.allow_one_cycle_of_replication()
 
 	def get_host_virus_population(self, environment):
-		# virus_populations = (len(host.viruses) for host in environment.hosts)
-
+		"""
+		This method returns a list of the number of viruses in each host in 
+		the environment.
+		"""
 		virus_populations = []
 		for host in environment.hosts:
 			virus_populations.append(len(host.viruses))

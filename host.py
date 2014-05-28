@@ -72,6 +72,7 @@ class Host(object):
 			return False
 
 	def immune_removal_probability(self):
+		time_difference = self.timespan_of_infection()
 		p = float(time_difference) / (self.immune_halftime + time_difference)
 
 		return p
@@ -90,7 +91,7 @@ class Host(object):
 		rand_number = randint(0, len(self.viruses))
 		parents = sample(self.viruses, rand_number) # the viruses to replicate
 
-		made = sum(virus.burst_size for virus in parents)
+		made = sum(virus.burst_size() for virus in parents)
 
 		return made
 
@@ -138,8 +139,29 @@ class Host(object):
 
 		return removed
 
+	def allow_one_cycle_of_replication(self):
+		"""
+		This method allows one cycle of replication, where we precompute the 
+		net number of progeny present rather than cyclically creating all of 
+		them and then removing them (which is slower).
+		"""
+		if self.is_dead() == False:
+			n_leftover = self.num_progeny_leftover()
+			progeny = self.generate_viral_progeny(num_viruses=n_leftover)
 
-	def allow_viral_replication(self):
+			parents_to_remove = sample(self.viruses, self.num_parental_removed())
+			for virus in parents_to_remove:
+				self.remove_virus(virus)
+
+			self.add_viruses(progeny)
+
+		else:
+			pass
+
+		return self
+
+
+	def allow_viral_replication_slow(self):
 		"""
 		This method is the "host" acting on the "viruses" present inside it.
 
@@ -160,9 +182,11 @@ class Host(object):
 			
 			viruses_to_replicate = sample(self.viruses, rand_number)
 
-			total_viruses_generated = 0
+			viruses_generated = []
 			for virus in viruses_to_replicate:
-				total_viruses_generated += virus.generate_progeny()
+				viruses_generated.exted(virus.generate_progeny())
+
+			self.add_viruses(viruses_generated)
 
 			# print('Total of %s viruses generated in host %s. ' % (total_viruses_generated, id(self)))
 			# print('Host %s now has %s viruses.' % (id(self), len(self.viruses)))
@@ -174,7 +198,7 @@ class Host(object):
 			pass
 
 
-	def allow_immune_removal(self):
+	def allow_immune_removal_slow(self):
 		"""
 		This method allows the removal of a certain number of viruses to be 
 		removed from the host due to immune system pressure.
