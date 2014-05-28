@@ -147,8 +147,9 @@ class Host(object):
 		"""
 		if self.is_dead() == False:
 			n_leftover = self.num_progeny_leftover()
+			print("%s progeny leftover." % n_leftover)
 			progeny = self.generate_viral_progeny(num_viruses=n_leftover)
-
+			print("%s progeny generated." % len(progeny))
 			parents_to_remove = sample(self.viruses, self.num_parental_removed())
 			for virus in parents_to_remove:
 				self.remove_virus(virus)

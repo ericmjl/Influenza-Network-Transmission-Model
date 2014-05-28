@@ -2,11 +2,11 @@ from id_generator import generate_id
 from random import sample, choice
 from joblib import Parallel, delayed
 
-def _allow_viral_replication(host):
-	return host.allow_viral_replication()
+# def _allow_viral_replication(host):
+# 	return host.allow_viral_replication()
 
-def _allow_immune_removal(host):
-	return host.allow_immune_removal()
+# def _allow_immune_removal(host):
+# 	return host.allow_immune_removal()
 
 class Controller(object):
 	"""
