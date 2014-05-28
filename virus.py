@@ -153,11 +153,11 @@ class Virus(object):
 
 		progeny = []
 		for i in range(burst_size):
-			self.replicate()
+			progeny.append(self.replicate())
 
 		# self.host.add_viruses(results)
 
-		return burst_size
+		return progeny
 
 	def replicate(self):
 		"""

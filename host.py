@@ -120,17 +120,23 @@ class Host(object):
 	def generate_viral_progeny(self, num_viruses):
 		"""
 		This method randomly samples from the current pool of viruses, and  
-		generates n progeny from them. The number of progeny that comes out 
-		may be slightly bigger than the n specified.
+		generates n progeny from them. The number of progeny that actually 
+		comes out may be slightly bigger than the n specified. This is ok.
 		"""
 		progeny = []
 		while len(progeny) < num_viruses:
 			parent = choice(self.viruses)
-			
-			
+			progeny.extend(parent.generate_progeny())
 
+		return progeny
 
+	def num_parental_removed(self):
+		p = self.immune_removal_probability()
+		n = len(self.viruses)
 
+		removed = binomial(n, p)
+
+		return removed
 
 
 	def allow_viral_replication(self):
