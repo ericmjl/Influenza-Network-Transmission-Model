@@ -8,6 +8,10 @@ class Sequence(object):
 
 	This can be subclassed to store seed sequences for other viruses, rather 
 	than using a generated sequence. 
+
+	Note that when a virus replicates, the full sequence object is not copied 
+	for each of its segments; rather, each segment only keeps track of the 
+	mutations that have happened.
 	"""
 	def __init__(self, length=1000, sequence=None):
 		"""
