@@ -45,7 +45,8 @@ class Controller(object):
 		from virus import Virus
 		
 		virus = Virus(creation_date=self.current_time, host=host)
-		virus.host.set_infection_history(time=self.current_time, source_host=None)
+		virus.host.set_infection_history(time=self.current_time, \
+			source_host=None)
 
 		print('Creating virus %s...' % virus.id[0:5])
 
@@ -53,7 +54,8 @@ class Controller(object):
 		"""
 		This set of commands happens when one increments one timestep. 
 		"""
-		print('Current time is %s. Incrementing time to %s' % (self.current_time, self.current_time + 1))
+		print('Current time is %s. Incrementing time to %s' % \
+			(self.current_time, self.current_time + 1))
 		
 		self.current_time += 1
 
@@ -80,7 +82,8 @@ class Controller(object):
 		viruses.
 		"""
 
-		infected_hosts = [host for host in environment.hosts if host.is_infected() == True and host.is_dead() == False]
+		infected_hosts = [host for host in environment.hosts if \
+		host.is_infected() == True and host.is_dead() == False]
 
 		return len(infected_hosts)
 

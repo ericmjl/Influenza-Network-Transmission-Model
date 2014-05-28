@@ -90,12 +90,6 @@ class Segment(object):
 
 		return sequence
 
-	def get_segment_number(self):
-		return self.segment_number
-
-	def get_mutations(self):
-		return self.mutations
-
 	def mutate(self):
 		"""
 		This method uses the length of the segment and the segment's mutation 
