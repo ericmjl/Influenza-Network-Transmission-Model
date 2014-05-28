@@ -36,7 +36,8 @@ class Environment(object):
 			self.create_host()
 
 	def __repr__(self):
-		return "Environment %s with %s hosts." % (self.id, len(self.hosts))
+		return "Environment %s... with %s hosts." % \
+		(self.id[0:5], len(self.hosts))
 
 	def create_host(self):
 		from host import Host
@@ -50,7 +51,7 @@ class Environment(object):
 
 		if isinstance(host, Host):
 			self.hosts.append(host)
-			print('Adding host %s... to environment %s' % (host.id[0:5], environment.id[0:5]))
+			print('Adding host %s... to environment %s...' % (host.id[0:5], self.id[0:5]))
 		else:
 			raise TypeError('A Host object must be specified!')
 
@@ -62,7 +63,7 @@ class Environment(object):
 
 		if isinstance(host, Host):
 			self.hosts.pop(self.hosts.index(host))
-			print('Removing host %s... from environment %s' % (host.id[0:5], environment.id[0:5]))
+			print('Removing host %s... from environment %s' % (host.id[0:5], self.id[0:5]))
 		elif type(host) == int:
 			self.hosts.pop(host)
 		else:

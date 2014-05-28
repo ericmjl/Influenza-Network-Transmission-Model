@@ -3,10 +3,13 @@ from datetime import datetime
 from joblib import Parallel, delayed
 from numpy.random import normal, binomial
 from id_generator import generate_id
+from time import time
 import ctypes
 
 import hashlib
 
+def _generate_progeny(virus):
+	return virus.generate_progeny()
 
 class Host(object):
 	"""
@@ -35,7 +38,7 @@ class Host(object):
 	configured by subclassing the Sampler class.
 	"""
 
-	def __init__(self, environment, immune_halftime=2 ):
+	def __init__(self, environment, immune_halftime=2):
 		super(Host, self).__init__()
 
 		self.id = generate_id()
@@ -129,6 +132,10 @@ class Host(object):
 			parent = choice(self.viruses)
 			progeny.extend(parent.generate_progeny())
 
+		# progeny = []
+		# returned = Parallel(n_jobs=4)(delayed(_generate_progeny)(parent) for parent in sample(self.viruses, len(self.viruses)) if len(progeny) < num_viruses)
+
+		# print progeny
 		return progeny
 
 	def num_parental_removed(self):
@@ -147,9 +154,15 @@ class Host(object):
 		"""
 		if self.is_dead() == False:
 			n_leftover = self.num_progeny_leftover()
-			print("Generating %s progeny..." % n_leftover)
+			print("Generating %s progeny in host %s..." % \
+				(n_leftover, self.id[0:5]))
+			# t1 = time()
 			progeny = self.generate_viral_progeny(num_viruses=n_leftover)
-			print("%s progeny generated." % len(progeny))
+			# t2 = time()
+			
+			# td = t2 - t1
+
+			print("%s progeny generated in host %s." % (len(progeny), self.id[0:5]))
 			parents_to_remove = sample(self.viruses, \
 				self.num_parental_removed())
 			for virus in parents_to_remove:

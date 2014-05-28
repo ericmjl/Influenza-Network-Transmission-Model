@@ -23,7 +23,7 @@ class Controller(object):
 		environment = Environment(num_hosts=num_hosts)
 
 		self.environments.append(environment)
-		print('Creating environment %s...' % environment.id[0:5])
+		print('Creating environment %s' % environment.id[0:5])
 
 	def create_host(self, environment, immune_halftime=2):
 		"""
@@ -32,7 +32,7 @@ class Controller(object):
 		from host import Host
 
 		host = Host(environment=environment, immune_halftime=immune_halftime)
-		print('Creating host %s...' % host.id[0:5])
+		print('Creating host %s' % host.id[0:5])
 
 	def create_hosts(self, environment, num_hosts):
 		for i in range(num_hosts):
@@ -48,7 +48,8 @@ class Controller(object):
 		virus.host.set_infection_history(time=self.current_time, \
 			source_host=None)
 
-		print('Creating virus %s...' % virus.id[0:5])
+		print('Creating virus %s inside host %s' % \
+			(virus.id[0:5], host.id[0:5]))
 
 	def increment_timestep(self, num_generations=10):
 		"""
@@ -64,6 +65,9 @@ class Controller(object):
 
 			for host in environment.infected_hosts():
 				host.allow_one_cycle_of_replication()
+				
+		return self
+
 
 	def get_host_virus_population(self, environment):
 		"""

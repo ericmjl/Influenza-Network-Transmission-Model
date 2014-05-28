@@ -6,6 +6,7 @@ from datetime import datetime
 from joblib import Parallel, delayed
 from id_generator import generate_id
 from multiprocessing import Pool
+from time import time
 import ctypes
 
 import hashlib
@@ -149,6 +150,9 @@ class Virus(object):
 		progeny = []
 		for i in range(burst_size):
 			progeny.append(self.replicate())
+		
+		print('%s progeny have been made from virus %s in host %s' % \
+			(len(progeny), self.id[0:5], self.host.id[0:5]))
 
 		return progeny
 
@@ -159,16 +163,18 @@ class Virus(object):
 		mutate is guaranteed to be called, but not guaranteed to happen. 
 		Whether a mutation occurs or not depends on the mutation rate of the 
 		virus.
+
+		The virus is not automatically added to the host. replicate() is 
+		called on by the generate_progeny() function, which returns a list of 
+		progeny. This list of progeny is then passed into the hosts's 
+		add_viruses() function, which then officially adds them to the host.
 		"""
 		new_virus = copy(self)
 		new_virus.creation_date = self.host.environment.current_time
 		new_virus.parent = self.id
 		new_virus.id = generate_id()
 		new_virus.mutate()
-		self.host.add_virus(new_virus)
 
-		# Return statement included for the purposes of Parallel processing in 
-		# the generate_progeny function.
 		return new_virus
 
 
