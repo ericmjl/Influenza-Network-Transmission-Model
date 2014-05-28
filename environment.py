@@ -50,6 +50,7 @@ class Environment(object):
 
 		if isinstance(host, Host):
 			self.hosts.append(host)
+			print('Adding host %s... to environment %s' % (host.id[0:5], environment.id[0:5]))
 		else:
 			raise TypeError('A Host object must be specified!')
 
@@ -58,6 +59,7 @@ class Environment(object):
 
 		if isinstance(host, Host):
 			self.hosts.pop(self.hosts.index(host))
+			print('Removing host %s... from environment %s' % (host.id[0:5], environment.id[0:5]))
 		elif type(host) == int:
 			self.hosts.pop(host)
 		else:
@@ -74,6 +76,3 @@ class Environment(object):
 	def get_naive_hosts(self):
 		naive_hosts = [host for host in self.hosts if host.was_infected() == False]
 		return naive_hosts
-
-		
-

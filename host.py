@@ -147,10 +147,11 @@ class Host(object):
 		"""
 		if self.is_dead() == False:
 			n_leftover = self.num_progeny_leftover()
-			print("%s progeny leftover." % n_leftover)
+			print("Generating %s progeny..." % n_leftover)
 			progeny = self.generate_viral_progeny(num_viruses=n_leftover)
 			print("%s progeny generated." % len(progeny))
-			parents_to_remove = sample(self.viruses, self.num_parental_removed())
+			parents_to_remove = sample(self.viruses, \
+				self.num_parental_removed())
 			for virus in parents_to_remove:
 				self.remove_virus(virus)
 
@@ -307,7 +308,7 @@ class Host(object):
 		"""
 		if not isinstance(virus, Virus):
 			raise TypeError('A Virus object must be specified!')
-		else:
+		elif virus not in self.viruses:
 			self.viruses.append(virus)
 
 	def add_viruses(self, viruses):
@@ -315,7 +316,8 @@ class Host(object):
 		This method takes in a list of viruses and appends it to the 
 		current list of viruses.
 		"""
-		self.viruses.extend(viruses)
+		for virus in viruses:
+			self.add_virus(virus)
 
 	def viruses(self):
 		"""
@@ -342,4 +344,3 @@ class Host(object):
 			self.viruses.pop(virus)
 		else:
 			raise TypeError('A Virus object or an integer must be specified!')
-

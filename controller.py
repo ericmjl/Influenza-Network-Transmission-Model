@@ -23,6 +23,7 @@ class Controller(object):
 		environment = Environment(num_hosts=num_hosts)
 
 		self.environments.append(environment)
+		print('Creating environment %s...' % environment.id[0:5])
 
 	def create_host(self, environment, immune_halftime=2):
 		"""
@@ -31,6 +32,7 @@ class Controller(object):
 		from host import Host
 
 		host = Host(environment=environment, immune_halftime=immune_halftime)
+		print('Creating host %s...' % host.id[0:5])
 
 	def create_hosts(self, environment, num_hosts):
 		for i in range(num_hosts):
@@ -45,10 +47,14 @@ class Controller(object):
 		virus = Virus(creation_date=self.current_time, host=host)
 		virus.host.set_infection_history(time=self.current_time, source_host=None)
 
+		print('Creating virus %s...' % virus.id[0:5])
+
 	def increment_timestep(self, num_generations=10):
 		"""
 		This set of commands happens when one increments one timestep. 
 		"""
+		print('Current time is %s. Incrementing time to %s' % (self.current_time, self.current_time + 1))
+		
 		self.current_time += 1
 
 		for environment in self.environments:

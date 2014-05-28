@@ -143,19 +143,12 @@ class Virus(object):
 		This method replicates the virus according to the burst size, which is 
 		specified by choosing an integer at random from the burst size range.
 		"""
-		burst_size = randint(self.burst_size_range[0], self.burst_size_range[1])
+		burst_size = randint(self.burst_size_range[0], \
+			self.burst_size_range[1])
 		
-		# burst_size = 5
-
-		# results = Parallel()(delayed(_replicate)(self) for i in range(burst_size))
-
-		# print('Adding viruses to host %s' % id(self.host))
-
 		progeny = []
 		for i in range(burst_size):
 			progeny.append(self.replicate())
-
-		# self.host.add_viruses(results)
 
 		return progeny
 
@@ -172,7 +165,7 @@ class Virus(object):
 		new_virus.parent = self.id
 		new_virus.id = generate_id()
 		new_virus.mutate()
-		# self.host.add_virus(new_virus)
+		self.host.add_virus(new_virus)
 
 		# Return statement included for the purposes of Parallel processing in 
 		# the generate_progeny function.
