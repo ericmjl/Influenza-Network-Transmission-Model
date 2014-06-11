@@ -108,18 +108,15 @@ class Virus(object):
 		This method returns a list of dictionaries that have recorded the 
 		mutations in the virus.
 		"""
-		mutations = []
-		for segment in self.segments:
-			mutations.append(segment.mutations)
+		mutations = [segment.mutations for segment in self.segments]
+
 		return mutations
 
 	def sequence(self):
 		"""
 		This method returns the sequence of each of the segments of the virus.
 		"""
-		sequences = []
-		for segment in self.segments:
-			sequences.append(segment.compute_sequence())
+		sequences = [segment.compute_sequence() for segment in self.segments]
 
 		return sequences
 
@@ -147,13 +144,10 @@ class Virus(object):
 		burst_size = randint(self.burst_size_range[0], \
 			self.burst_size_range[1])
 		
-		progeny = []
-		for i in range(burst_size):
-			progeny.append(self.replicate())
+		progeny = [self.replicate() for i in range(burst_size)]
+		# for i in range(burst_size):
+		# 	progeny.append(self.replicate())
 		
-		# print('%s progeny have been made from virus %s in host %s' % \
-			# (len(progeny), self.id[0:5], self.host.id[0:5]))
-
 		return progeny
 
 	def replicate(self):
@@ -173,12 +167,13 @@ class Virus(object):
 		new_virus.creation_date = self.host.environment.current_time
 		new_virus.parent = self.id
 		new_virus.id = generate_id()
+		new_virus.segments = deepcopy(self.segments)
 		new_virus.mutate()
 
 		return new_virus
 
 
-	def generate_segment(self, segment_number, substitution_rate=7E-3, \
+	def generate_segment(self, segment_number, substitution_rate=7E-2, \
 		sequence=None, length=1800):
 		"""
 		This method creates a segment with the parameters passed in.
@@ -192,10 +187,10 @@ class Virus(object):
 		"""
 		This method generates the specified number of segments.
 		"""
-		segments = []
+		segments = [self.generate_segment(i) for i in range(num_segments)]
 
-		for i in range(num_segments):
-			segments.append(self.generate_segment(segment_number=i))
+		# for i in range(num_segments):
+		# 	segments.append(self.generate_segment(segment_number=i))
 
 		return segments
 

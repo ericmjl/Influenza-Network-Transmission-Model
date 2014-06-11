@@ -2,12 +2,6 @@ from id_generator import generate_id
 from random import sample, choice
 from joblib import Parallel, delayed
 
-# def _allow_viral_replication(host):
-# 	return host.allow_viral_replication()
-
-# def _allow_immune_removal(host):
-# 	return host.allow_immune_removal()
-
 class Controller(object):
 	"""
 	The controller object is the overall manager for the viral simulation.
@@ -32,7 +26,6 @@ class Controller(object):
 		from host import Host
 
 		host = Host(environment=environment, immune_halftime=immune_halftime)
-		# print('Creating host %s' % host.id[0:5])
 
 	def create_hosts(self, environment, num_hosts):
 		for i in range(num_hosts):
@@ -48,16 +41,10 @@ class Controller(object):
 		virus.host.set_infection_history(time=self.current_time, \
 			source_host=None)
 
-		# print('Creating virus %s inside host %s' % \
-			# (virus.id[0:5], host.id[0:5]))
-
 	def increment_timestep(self, num_generations=10):
 		"""
 		This set of commands happens when one increments one timestep. 
-		"""
-		# print('Current time is %s. Incrementing time to %s' % \
-			# (self.current_time, self.current_time + 1))
-		
+		"""		
 		self.current_time += 1
 
 		for environment in self.environments:
@@ -68,16 +55,22 @@ class Controller(object):
 				
 		return self
 
+	def get_hamming_distances(self, viruses):
+		"""
+		THis method returns a list of hamming distances for each virus in a 
+		list of viruses.
+		"""
+		distances = [len(i) for virus in viruses for i in virus.mutations()]
+		
+		return distances
 
 	def get_host_virus_population(self, environment):
 		"""
 		This method returns a list of the number of viruses in each host in 
 		the environment.
 		"""
-		virus_populations = []
-		for host in environment.hosts:
-			virus_populations.append(len(host.viruses))
-				
+
+		virus_populations = [len(host.viruses) for host in environment.hosts]
 		return virus_populations
 
 	def get_num_of_infected_hosts(self, environment):
@@ -85,7 +78,6 @@ class Controller(object):
 		This method counts the number of alive hosts that are infected with 
 		viruses.
 		"""
-
 		infected_hosts = [host for host in environment.hosts if \
 		host.is_infected() == True and host.is_dead() == False]
 

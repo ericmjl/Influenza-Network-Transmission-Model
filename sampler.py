@@ -1,5 +1,6 @@
 from environment import Environment
 from random import sample, randint
+from numpy.random import normal, binomial
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
@@ -9,14 +10,77 @@ from sklearn.cluster import AffinityPropagation
 
 
 class Sampler(object):
-	"""The Sampler class samples a bunch of viruses from an Environment."""
-	def __init__(self, directory_prefix):
+	"""
+	The Sampler object samples a bunch of viruses from hosts in an  
+	Environment.
+
+	Many Sampler objects can exist within a single environment. The role of 
+	the Sampler object is to contact a host, and remove a certain number of 
+	viruses from it to be sequenced. This is to mimic the real-world behavior 
+	and limitations of a sampler.
+
+	The dumping of full sequences of every virus present in the host at every 
+	timepoint will not be done by the Sampler object, as that is, by 	
+	definition, what the Sampler object does not do. This will be a part of 
+	the Controller object.
+
+	However, the Sampler object will have a "dump_sampled_sequences()" method, 
+	which will dump the sequences that have been sampled. This will not mimic 
+	the realities of sampling, in which we don't necesssarily get all of the 
+	viruses present. In other words, we are assuming perfect sequencing of the 
+	sampled virus population.
+	"""
+	def __init__(self, environment):
 		super(Sampler, self).__init__() 
 		self.sampled_viruses = []
-		self.directory_prefix = directory_prefix
+		self.environment = environment
+
+		self.sampled_viruses = []
+
+		self.sampled_hosts = []
 
 
-	
+	def sample_viruses(self, host, mean=10, stdev=2):
+		"""
+		This method gets a subsample of viruses from the population of viruses 
+		present inside a Host. The number of viruses sampled follows a 
+		Normal(10,2) distribution, which (for now) is identical to the 
+		"infect" function of a Host. 
+
+		The Host must be infectious in order for viruses to be able to be 
+		sampled. This should mimic known biology, in which only when the host 
+		is shedding virus is it infectious; .similarly, only when it is 
+		shedding virus are we able to detect viruses 
+
+		Therefore, when we sample the Host, 
+			- 	if the Host is infectious, then will return a tuple containing 
+				the host and a list of the sampled viruses 
+			-	if the Host is not infectious, we will return a tuple 
+				containing the host and an empty list.
+		"""
+		# Check that host is a Host type
+		from host import Host
+
+		if isinstance(host, Host):
+			# Check if the host is infectious
+			if host.is_infectious():
+
+				# Guarantee that the number of viruses sampled is fewer than 
+				# the number of viruses present in the host.
+				num_viruses = len(host.viruses) + 1
+				while num_viruses > len(host.viruses):
+					num_viruses = int(normal(mean, stdev))
+
+				# Sample viruses from the host, and remove them from the host.
+				sampled_viruses = sample(host.viruses, num_viruses)
+				host.remove_viruses(sampled_viruses)
+				return (host, sampled_viruses)
+
+			if not host.is_infectious():
+				return (host, [])
+
+		else:
+			raise TypeError("A Host object must be specified")
 
 	# def SampleVirusesFromEnvironment(self, environment, n):
 	# 	"""
