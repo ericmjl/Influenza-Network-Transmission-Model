@@ -93,7 +93,11 @@ class Host(object):
 		p = self.immune_removal_probability()
 		n = num_progeny_made
 
-		removed = binomial(n, p)
+		if n > 0:
+			removed = binomial(n, p)
+
+		else:
+			removed = 0
 
 		return removed
 

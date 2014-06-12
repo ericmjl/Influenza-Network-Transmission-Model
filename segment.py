@@ -60,6 +60,10 @@ class Segment(object):
 		This method initializes the mutation rate of the segment. It also 
 		checks to make sure that the mutation rate is a floating point number, 
 		which is important for computation later on.
+
+		INPUTS:
+		-	rate: a substitution rate in the units substitutions per site 
+			per year.
 		"""
 		if type(rate) != float:
 			raise TypeError('A floating point number must be specified!')
@@ -69,6 +73,9 @@ class Segment(object):
 	def set_segment_number(self, segment_number):
 		"""
 		This method initializes the segment number of the segment.
+
+		INPUTS:
+		-	segment_number: the segment's number (in the style of influenza)
 		"""
 		if type(segment_number) != int:
 			raise TypeError('An integer must be specified!')
@@ -106,6 +113,14 @@ class Segment(object):
 			"""
 			This function chooses n positions at random within
 			range(start, end)
+
+			INPUTS:
+			-	start: lower bound of the range of positions to choose from
+			-	end: upper bound of the range of positions to choose from
+			- 	num_positions: the number of positions to be mutated
+
+			OUTPUTS:
+			-	a list of positions within the bounds (start, end)
 			"""
 			return sample(range(start, end), num_positions)
 
@@ -116,6 +131,9 @@ class Segment(object):
 			"""
 			This function chooses a new letter from ATGC that is
 			different from the letter passed into the function.
+
+			INPUTS:
+			-	letter: the letter that will not be chosen from ATGC.
 			"""
 			possible_letters = set(['A', 'T', 'G', 'C'])
 			new_letter = choice(list(
@@ -131,9 +149,10 @@ class Segment(object):
 
 			self.mutations[position] = choose_new_letter(letter)
 
-
-
-
+			# Note: this mutational simulation process allows the virus to 
+			# back-mutate. In this case, we consider the back-mutation to
+			# remain a type of "mutation", rather than a reversion, because 
+			# it is different from its  "parental" sequence. 
 
 
 

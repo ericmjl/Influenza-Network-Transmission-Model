@@ -173,7 +173,7 @@ class Virus(object):
 		return new_virus
 
 
-	def generate_segment(self, segment_number, substitution_rate=7E-2, \
+	def generate_segment(self, segment_number, substitution_rate=7E-3, \
 		sequence=None, length=1800):
 		"""
 		This method creates a segment with the parameters passed in.
