@@ -57,7 +57,7 @@ class Virus(object):
 
 	- mutate:
 	 	a method that mutates all of the segments present in the virus 
-	 	according to the mutation rate of the virus.
+	 	according to the mutation rate of the segment.
 
 	- replicate: 
 	 	a method that returns a copy of the virus. The mutate function is
@@ -73,7 +73,7 @@ class Virus(object):
 	"""
 
 	def __init__(self, creation_date, host, num_segments=2, \
-		burst_size_range=(5, 10), replication_time=30):
+		burst_size_range=(10, 20), replication_time=30):
 		"""
 		Initiailize the virus with 2 segments, with default segment length.
 		"""
